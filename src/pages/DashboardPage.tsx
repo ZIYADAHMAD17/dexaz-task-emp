@@ -8,6 +8,10 @@ import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
+import {
+  PieChart, Pie, Cell, Tooltip as RechartsTooltip, Legend, ResponsiveContainer,
+  BarChart, Bar, XAxis, YAxis, CartesianGrid
+} from 'recharts';
 
 const DashboardPage: React.FC = () => {
   const { user } = useAuth();
@@ -21,12 +25,14 @@ const DashboardPage: React.FC = () => {
   const [recentNotices, setRecentNotices] = React.useState<Notice[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [isCheckedIn, setIsCheckedIn] = React.useState(false);
+  const [taskDistribution, setTaskDistribution] = React.useState<any[]>([]);
+  const [employeeWorkload, setEmployeeWorkload] = React.useState<any[]>([]);
   const { toast } = useToast();
 
   const fetchData = async () => {
     setLoading(true);
     try {
-      const [empCount, taskCount, leaveCount, tasksRes, noticesRes] = await Promise.all([
+      const results = await Promise.all([
         supabase.from('employees').select('*', { count: 'exact', head: true }),
         supabase.from('tasks').select('*', { count: 'exact', head: true }).neq('status', 'completed'),
         supabase.from('leaves').select('*', { count: 'exact', head: true }).eq('status', 'Pending'),
@@ -38,7 +44,11 @@ const DashboardPage: React.FC = () => {
           .select('*, author:profiles(name, role)')
           .order('created_at', { ascending: false })
           .limit(2),
+        supabase.from('tasks').select('status'),
+        supabase.from('tasks').select('assignee:profiles(name)'),
       ]);
+
+      const [empCount, taskCount, leaveCount, tasksRes, noticesRes, distRes, workloadRes] = results;
 
       setStats({
         totalEmployees: empCount.count || 0,
@@ -67,6 +77,29 @@ const DashboardPage: React.FC = () => {
         createdAt: new Date(n.created_at).toLocaleDateString(),
         isPinned: n.is_pinned,
       })));
+
+      // Process Task Distribution
+      const statusCounts: any = {};
+      (distRes.data || []).forEach((t: any) => {
+        statusCounts[t.status] = (statusCounts[t.status] || 0) + 1;
+      });
+      const distData = Object.keys(statusCounts).map(status => ({
+        name: status.charAt(0).toUpperCase() + status.slice(1),
+        value: statusCounts[status]
+      }));
+      setTaskDistribution(distData);
+
+      // Process Employee Workload
+      const workloadCounts: any = {};
+      (workloadRes.data || []).forEach((t: any) => {
+        const name = t.assignee?.name || 'Unassigned';
+        workloadCounts[name] = (workloadCounts[name] || 0) + 1;
+      });
+      const workloadData = Object.keys(workloadCounts).map(name => ({
+        name,
+        tasks: workloadCounts[name]
+      })).sort((a, b) => b.tasks - a.tasks).slice(0, 5);
+      setEmployeeWorkload(workloadData);
 
       // Fetch today's attendance for the user
       if (user) {
@@ -202,6 +235,61 @@ const DashboardPage: React.FC = () => {
           >
             {isCheckedIn ? 'Check Out' : 'Check In Now'}
           </Button>
+        </div>
+
+        {/* Analytics Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="bg-card border border-border rounded-2xl p-6 shadow-sm">
+            <h3 className="text-lg font-semibold mb-6 flex items-center gap-2">
+              <TrendingUp className="h-5 w-5 text-primary" />
+              Task Status Distribution
+            </h3>
+            <div className="h-[300px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={taskDistribution}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={60}
+                    outerRadius={80}
+                    paddingAngle={5}
+                    dataKey="value"
+                  >
+                    {taskDistribution.map((_, index) => (
+                      <Cell key={`cell-${index}`} fill={['#6366f1', '#10b981', '#f59e0b', '#ef4444'][index % 4]} />
+                    ))}
+                  </Pie>
+                  <RechartsTooltip
+                    contentStyle={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))', borderRadius: '8px' }}
+                    itemStyle={{ color: 'hsl(var(--foreground))' }}
+                  />
+                  <Legend verticalAlign="bottom" height={36} />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+
+          <div className="bg-card border border-border rounded-2xl p-6 shadow-sm">
+            <h3 className="text-lg font-semibold mb-6 flex items-center gap-2">
+              <Users className="h-5 w-5 text-primary" />
+              Employee Workload (Top 5)
+            </h3>
+            <div className="h-[300px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={employeeWorkload}>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
+                  <XAxis dataKey="name" fontSize={12} tickLine={false} axisLine={false} />
+                  <YAxis fontSize={12} tickLine={false} axisLine={false} />
+                  <RechartsTooltip
+                    cursor={{ fill: 'transparent' }}
+                    contentStyle={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))', borderRadius: '8px' }}
+                  />
+                  <Bar dataKey="tasks" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} barSize={40} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
         </div>
 
         {/* Main Content Grid */}

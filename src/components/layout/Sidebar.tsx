@@ -1,10 +1,10 @@
 import React from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import { 
-  LayoutDashboard, 
-  CheckSquare, 
-  Bell, 
-  Users, 
+import {
+  LayoutDashboard,
+  CheckSquare,
+  Bell,
+  Users,
   Settings,
   LogOut,
   ChevronLeft,
@@ -52,8 +52,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle }) => {
       {/* Logo */}
       <div className="flex h-16 items-center justify-between px-4 border-b border-sidebar-border">
         <div className={cn('flex items-center gap-3 overflow-hidden', collapsed && 'justify-center')}>
-          <div className="w-10 h-10 rounded-xl gradient-dexaz flex items-center justify-center flex-shrink-0 shadow-glow">
-            <span className="text-white font-bold text-lg">D</span>
+          <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+            <img src="/logo.png" alt="Dexaz Logo" className="w-7 h-7 object-contain" />
           </div>
           {!collapsed && (
             <div className="animate-fade-in">
@@ -69,7 +69,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle }) => {
         {navItems.map((item) => {
           const isActive = location.pathname === item.to;
           const Icon = item.icon;
-          
+
           const linkContent = (
             <NavLink
               key={item.to}
@@ -99,7 +99,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle }) => {
               </Tooltip>
             );
           }
-          
+
           return linkContent;
         })}
       </nav>
@@ -125,7 +125,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle }) => {
             </div>
           )}
         </div>
-        
+
         <Tooltip delayDuration={0}>
           <TooltipTrigger asChild>
             <Button
