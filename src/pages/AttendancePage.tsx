@@ -1,14 +1,12 @@
-import React, { useState, useCallback, useEffect } from 'react';
-import { Plus, ArrowUpDown, Download } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { ArrowUpDown, Download, ChevronLeft, ChevronRight, Calendar as CalendarIcon } from 'lucide-react';
 import { Header } from '@/components/layout';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import { supabase } from '@/lib/supabase';
 import { useToast } from '@/hooks/use-toast';
-
-const DAYS = Array.from({ length: 14 }, (_, i) => i + 1);
+import { format, addMonths, subMonths, getDaysInMonth, startOfMonth, endOfMonth } from 'date-fns';
 
 interface AttendanceRow {
   id: string;
@@ -17,18 +15,23 @@ interface AttendanceRow {
 }
 
 const AttendancePage: React.FC = () => {
+  const [currentDate, setCurrentDate] = useState(new Date());
   const [rows, setRows] = useState<AttendanceRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [sortAsc, setSortAsc] = useState(true);
-  const [newName, setNewName] = useState('');
-  const [isAdding, setIsAdding] = useState(false);
   const [hoveredRow, setHoveredRow] = useState<string | null>(null);
   const [hoveredCol, setHoveredCol] = useState<number | null>(null);
   const { toast } = useToast();
 
+  const daysInMonth = getDaysInMonth(currentDate);
+  const DAYS = Array.from({ length: daysInMonth }, (_, i) => i + 1);
+
   const fetchAttendance = async () => {
     setLoading(true);
     try {
+      const start = format(startOfMonth(currentDate), 'yyyy-MM-dd');
+      const end = format(endOfMonth(currentDate), 'yyyy-MM-dd');
+
       // Fetch all profiles to have rows
       const { data: profiles, error: pError } = await supabase
         .from('profiles')
@@ -37,11 +40,12 @@ const AttendancePage: React.FC = () => {
 
       if (pError) throw pError;
 
-      // Fetch attendance for these profiles
-      // For this demo, we assume we track day 1-14 of current month
+      // Fetch attendance for these profiles for the selected month
       const { data: attendance, error: aError } = await supabase
         .from('attendance')
-        .select('*');
+        .select('*')
+        .gte('date', start)
+        .lte('date', end);
 
       if (aError) throw aError;
 
@@ -49,7 +53,12 @@ const AttendancePage: React.FC = () => {
         const profileAttendance = (attendance || []).filter(a => a.profile_id === p.id);
         const days: Record<number, boolean> = {};
         DAYS.forEach(day => {
-          const entry = profileAttendance.find(a => new Date(a.date).getDate() === day);
+          const entry = profileAttendance.find(a => {
+            const entryDate = new Date(a.date);
+            return entryDate.getDate() === day &&
+              entryDate.getMonth() === currentDate.getMonth() &&
+              entryDate.getFullYear() === currentDate.getFullYear();
+          });
           days[day] = entry ? entry.status : false;
         });
         return { id: p.id, name: p.name, days };
@@ -65,16 +74,15 @@ const AttendancePage: React.FC = () => {
 
   useEffect(() => {
     fetchAttendance();
-  }, [sortAsc]);
+  }, [sortAsc, currentDate]);
 
   const toggleCell = async (rowId: string, day: number) => {
     const currentState = rows.find(r => r.id === rowId)?.days[day];
     const newState = !currentState;
 
     try {
-      const date = new Date();
-      date.setDate(day);
-      const dateStr = date.toISOString().split('T')[0];
+      const date = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
+      const dateStr = format(date, 'yyyy-MM-dd');
 
       const { error } = await supabase
         .from('attendance')
@@ -103,9 +111,8 @@ const AttendancePage: React.FC = () => {
     const newState = !allChecked;
 
     try {
-      const date = new Date();
-      date.setDate(day);
-      const dateStr = date.toISOString().split('T')[0];
+      const date = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
+      const dateStr = format(date, 'yyyy-MM-dd');
 
       const upserts = rows.map(r => ({
         profile_id: r.id,
@@ -128,6 +135,10 @@ const AttendancePage: React.FC = () => {
     }
   };
 
+  const handlePrevMonth = () => setCurrentDate(prev => subMonths(prev, 1));
+  const handleNextMonth = () => setCurrentDate(prev => addMonths(prev, 1));
+  const handleCurrentMonth = () => setCurrentDate(new Date());
+
   const handleSort = () => {
     setSortAsc(!sortAsc);
   };
@@ -138,6 +149,7 @@ const AttendancePage: React.FC = () => {
       return;
     }
 
+    const monthLabel = format(currentDate, 'MMMM_yyyy');
     const headers = ['Employee', ...DAYS.map(d => `Day ${d}`)];
     const csvRows = [
       headers.join(','),
@@ -152,7 +164,7 @@ const AttendancePage: React.FC = () => {
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.setAttribute('href', url);
-    link.setAttribute('download', `attendance_report_${new Date().toISOString().split('T')[0]}.csv`);
+    link.setAttribute('download', `attendance_report_${monthLabel}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -170,11 +182,49 @@ const AttendancePage: React.FC = () => {
       />
 
       <div className="p-6 space-y-4">
-        <div className="flex justify-end">
-          <Button variant="outline" onClick={handleExport} className="gap-2">
-            <Download className="h-4 w-4" />
-            Export Report
-          </Button>
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-card p-4 rounded-xl border border-border shadow-sm">
+          <div className="flex items-center gap-2">
+            <div className="p-2 rounded-lg bg-primary/10 text-primary">
+              <CalendarIcon className="h-5 w-5" />
+            </div>
+            <div>
+              <h3 className="font-semibold text-foreground">{format(currentDate, 'MMMM yyyy')}</h3>
+              <p className="text-xs text-muted-foreground">{daysInMonth} days in this month</p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <div className="flex items-center p-1 bg-secondary/50 rounded-lg">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handlePrevMonth}
+                className="h-8 w-8 text-muted-foreground hover:text-primary"
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleCurrentMonth}
+                className="px-4 text-xs font-medium"
+              >
+                Today
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handleNextMonth}
+                className="h-8 w-8 text-muted-foreground hover:text-primary"
+              >
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            </div>
+            <Button variant="outline" onClick={handleExport} className="gap-2 h-10">
+              <Download className="h-4 w-4" />
+              <span className="hidden sm:inline">Export Report</span>
+            </Button>
+          </div>
         </div>
         {/* Table container */}
         <div className="bg-card rounded-xl border border-border shadow-sm overflow-hidden">
