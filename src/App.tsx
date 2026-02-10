@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { HashRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { ThemeProvider } from "@/contexts/ThemeContext";
 import { MainLayout } from "@/components/layout/MainLayout";
 import LoginPage from "./pages/LoginPage";
 import DashboardPage from "./pages/DashboardPage";
@@ -20,26 +21,28 @@ const queryClient = new QueryClient();
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <HashRouter>
-          <Routes>
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/" element={<Navigate to="/dashboard" replace />} />
-            <Route element={<MainLayout />}>
-              <Route path="/dashboard" element={<DashboardPage />} />
-              <Route path="/tasks" element={<TasksPage />} />
-              <Route path="/notices" element={<NoticesPage />} />
-              <Route path="/employees" element={<EmployeesPage />} />
-              <Route path="/attendance" element={<AttendancePage />} />
-              <Route path="/leave-management" element={<LeaveManagementPage />} />
-              <Route path="/settings" element={<SettingsPage />} />
-            </Route>
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </HashRouter>
-      </TooltipProvider>
+      <ThemeProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <HashRouter>
+            <Routes>
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/" element={<Navigate to="/dashboard" replace />} />
+              <Route element={<MainLayout />}>
+                <Route path="/dashboard" element={<DashboardPage />} />
+                <Route path="/tasks" element={<TasksPage />} />
+                <Route path="/notices" element={<NoticesPage />} />
+                <Route path="/employees" element={<EmployeesPage />} />
+                <Route path="/attendance" element={<AttendancePage />} />
+                <Route path="/leave-management" element={<LeaveManagementPage />} />
+                <Route path="/settings" element={<SettingsPage />} />
+              </Route>
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </HashRouter>
+        </TooltipProvider>
+      </ThemeProvider>
     </AuthProvider>
   </QueryClientProvider>
 );

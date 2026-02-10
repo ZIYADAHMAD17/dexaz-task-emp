@@ -19,10 +19,12 @@ import {
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/lib/supabase';
 import { useToast } from '@/hooks/use-toast';
+import { useTheme } from '@/contexts/ThemeContext';
 
 const SettingsPage: React.FC = () => {
   const { user, isAdmin } = useAuth();
   const { toast } = useToast();
+  const { theme, toggleTheme } = useTheme();
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [editForm, setEditForm] = useState({
     name: user?.name || '',
@@ -263,7 +265,7 @@ const SettingsPage: React.FC = () => {
               <Label className="font-medium">Dark Mode</Label>
               <p className="text-sm text-muted-foreground">Toggle dark theme</p>
             </div>
-            <Switch />
+            <Switch checked={theme === 'dark'} onCheckedChange={toggleTheme} />
           </div>
           <div className="flex items-center justify-between p-4 rounded-lg bg-secondary/30">
             <div>
@@ -287,7 +289,7 @@ const SettingsPage: React.FC = () => {
           </div>
           <div className="p-4 rounded-lg bg-secondary/30">
             <Label className="font-medium mb-2 block">Timezone</Label>
-            <p className="text-sm text-muted-foreground">Pacific Time (PT) - UTC-8</p>
+            <p className="text-sm text-muted-foreground">India Standard Time (IST) - UTC+5:30</p>
           </div>
           <div className="p-4 rounded-lg bg-secondary/30">
             <Label className="font-medium mb-2 block">Date Format</Label>
