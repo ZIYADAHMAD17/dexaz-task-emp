@@ -21,11 +21,11 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222 47% 11%;
 
-    /* Primary - Deep Slate Blue */
-    --primary: 217 91% 60%;
+    /* Primary - Vibrant Purple */
+    --primary: 271 91% 65%;
     --primary-foreground: 0 0% 100%;
 
-    /* Secondary - Cool Gray */
+    /* Secondary - Warm Gray */
     --secondary: 220 14% 96%;
     --secondary-foreground: 222 47% 11%;
 
@@ -33,8 +33,8 @@
     --muted: 220 14% 96%;
     --muted-foreground: 220 9% 46%;
 
-    /* Accent - Electric Cyan */
-    --accent: 190 95% 45%;
+    /* Accent - Hot Pink */
+    --accent: 330 81% 60%;
     --accent-foreground: 0 0% 100%;
 
     /* Destructive - Coral Red */
@@ -45,8 +45,8 @@
     --success: 160 84% 39%;
     --success-foreground: 0 0% 100%;
 
-    /* Warning - Amber */
-    --warning: 38 92% 50%;
+    /* Warning - Amber/Orange */
+    --warning: 24 95% 64%;
     --warning-foreground: 0 0% 100%;
 
     /* Info - Sky Blue */
@@ -56,27 +56,27 @@
     /* Borders and inputs */
     --border: 220 13% 91%;
     --input: 220 13% 91%;
-    --ring: 217 91% 60%;
+    --ring: 271 91% 65%;
 
     --radius: 0.75rem;
 
-    /* Sidebar - Dark slate */
+    /* Sidebar - Deep Indigo/Slate */
     --sidebar-background: 222 47% 11%;
     --sidebar-foreground: 220 14% 96%;
-    --sidebar-primary: 217 91% 60%;
+    --sidebar-primary: 271 91% 65%;
     --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 220 26% 18%;
     --sidebar-accent-foreground: 220 14% 96%;
     --sidebar-border: 220 26% 18%;
-    --sidebar-ring: 217 91% 60%;
+    --sidebar-ring: 271 91% 65%;
     --sidebar-muted: 220 9% 46%;
 
-    /* Custom Dexaz colors */
-    --dexaz-gradient-start: 217 91% 60%;
-    --dexaz-gradient-end: 190 95% 45%;
+    /* Custom Dexaz colors - Purple to Orange Gradient */
+    --dexaz-gradient-start: 271 91% 65%;
+    --dexaz-gradient-end: 24 95% 64%;
     --dexaz-surface: 220 20% 97%;
     --dexaz-surface-elevated: 0 0% 100%;
-    --dexaz-glow: 217 91% 60%;
+    --dexaz-glow: 271 91% 65%;
   }
 
   .dark {
@@ -89,7 +89,7 @@
     --popover: 222 47% 9%;
     --popover-foreground: 220 14% 96%;
 
-    --primary: 217 91% 60%;
+    --primary: 271 91% 65%;
     --primary-foreground: 0 0% 100%;
 
     --secondary: 220 26% 14%;
@@ -98,7 +98,7 @@
     --muted: 220 26% 14%;
     --muted-foreground: 220 9% 56%;
 
-    --accent: 190 95% 45%;
+    --accent: 330 81% 60%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 62% 45%;
@@ -107,7 +107,7 @@
     --success: 160 84% 39%;
     --success-foreground: 0 0% 100%;
 
-    --warning: 38 92% 50%;
+    --warning: 24 95% 64%;
     --warning-foreground: 0 0% 0%;
 
     --info: 199 89% 48%;
@@ -115,23 +115,23 @@
 
     --border: 220 26% 18%;
     --input: 220 26% 18%;
-    --ring: 217 91% 60%;
+    --ring: 271 91% 65%;
 
     --sidebar-background: 222 47% 6%;
     --sidebar-foreground: 220 14% 96%;
-    --sidebar-primary: 217 91% 60%;
+    --sidebar-primary: 271 91% 65%;
     --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 220 26% 14%;
     --sidebar-accent-foreground: 220 14% 96%;
     --sidebar-border: 220 26% 14%;
-    --sidebar-ring: 217 91% 60%;
+    --sidebar-ring: 271 91% 65%;
     --sidebar-muted: 220 9% 46%;
 
-    --dexaz-gradient-start: 217 91% 60%;
-    --dexaz-gradient-end: 190 95% 45%;
+    --dexaz-gradient-start: 271 91% 65%;
+    --dexaz-gradient-end: 24 95% 64%;
     --dexaz-surface: 222 47% 6%;
     --dexaz-surface-elevated: 222 47% 9%;
-    --dexaz-glow: 217 91% 60%;
+    --dexaz-glow: 271 91% 65%;
   }
 }
 
@@ -165,6 +165,7 @@
 }
 
 @layer utilities {
+
   /* Gradient utilities */
   .gradient-dexaz {
     background: linear-gradient(135deg, hsl(var(--dexaz-gradient-start)) 0%, hsl(var(--dexaz-gradient-end)) 100%);
@@ -240,22 +241,48 @@
   }
 
   @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 1;
+    }
   }
 
   @keyframes slideUp {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
   @keyframes slideInRight {
-    from { opacity: 0; transform: translateX(20px); }
-    to { opacity: 1; transform: translateX(0); }
+    from {
+      opacity: 0;
+      transform: translateX(20px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
   }
 
   @keyframes pulseSoft {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.7; }
+
+    0%,
+    100% {
+      opacity: 1;
+    }
+
+    50% {
+      opacity: 0.7;
+    }
   }
 }

@@ -108,164 +108,150 @@ const LoginPage: React.FC = () => {
       </div>
 
       {/* Right Panel - Form */}
-      <div className="flex-1 flex items-center justify-center p-8 bg-background">
-        <div className="w-full max-w-md">
-          {/* Mobile Logo */}
-          <div className="w-full max-w-[440px] animate-slide-up px-4">
-            <div className="text-center mb-8">
-              <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4 lg:hidden">
-                <img src="/logo.png" alt="Dexaz Logo" className="w-10 h-10 object-contain text-primary" />
-              </div>
-              <h2 className="text-3xl font-bold text-foreground">
-                {mode === 'login' ? 'Welcome back' : 'Create Account'}
-              </h2>
-              <p className="text-muted-foreground mt-2">
-                {mode === 'login'
-                  ? 'Sign in to your account to continue'
-                  : 'Join Dexaz Employee Management System today'}
-              </p>
+      <div className="flex-1 flex items-center justify-center p-4 sm:p-8 bg-background">
+        <div className="w-full max-w-[440px] animate-slide-up">
+          {/* Mobile Logo & Header */}
+          <div className="text-center mb-8">
+            <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4 lg:hidden">
+              <img src="/logo.png" alt="Dexaz Logo" className="w-10 h-10 object-contain text-primary" />
             </div>
-
-            <div className="space-y-6">
-              <div className="space-y-2">
-                <h2 className="text-2xl font-bold text-foreground hidden"> {/* Hidden as new h2 is above */}
-                  {mode === 'login' ? 'Welcome back' : 'Create an account'}
-                </h2>
-                <p className="text-muted-foreground hidden"> {/* Hidden as new p is above */}
-                  {mode === 'login'
-                    ? 'Sign in to your account to continue'
-                    : 'Enter your details to register as an employee'}
-                </p>
-              </div>
-
-              <form onSubmit={handleSubmit} className="space-y-4">
-                {mode === 'signup' && (
-                  <>
-                    <div className="space-y-2">
-                      <Label>Account Type</Label>
-                      <div className="grid grid-cols-3 gap-2">
-                        <button
-                          type="button"
-                          onClick={() => setRole('employee')}
-                          className={cn(
-                            "flex flex-col items-center justify-center gap-1 h-20 rounded-lg border-2 transition-all",
-                            role === 'employee'
-                              ? "border-primary bg-primary/5 text-primary"
-                              : "border-border bg-card text-muted-foreground hover:border-border/80"
-                          )}
-                        >
-                          <UserIcon className="h-4 w-4" />
-                          <span className="text-xs font-medium">Employee</span>
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => setRole('admin')}
-                          className={cn(
-                            "flex flex-col items-center justify-center gap-1 h-20 rounded-lg border-2 transition-all",
-                            role === 'admin'
-                              ? "border-primary bg-primary/5 text-primary"
-                              : "border-border bg-card text-muted-foreground hover:border-border/80"
-                          )}
-                        >
-                          <Shield className="h-4 w-4" />
-                          <span className="text-xs font-medium">Admin</span>
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => setRole('founder')}
-                          className={cn(
-                            "flex flex-col items-center justify-center gap-1 h-20 rounded-lg border-2 transition-all",
-                            role === 'founder'
-                              ? "border-primary bg-primary/5 text-primary"
-                              : "border-border bg-card text-muted-foreground hover:border-border/80"
-                          )}
-                        >
-                          <Crown className="h-4 w-4" />
-                          <span className="text-xs font-medium">Founder</span>
-                        </button>
-                      </div>
+            <h2 className="text-3xl font-bold tracking-tight text-foreground">
+              {mode === 'login' ? 'Welcome back' : 'Create account'}
+            </h2>
+            <p className="text-muted-foreground mt-2">
+              {mode === 'login'
+                ? 'Sign in to your account to continue'
+                : 'Enter your details to get started'}
+            </p>
+          </div>
+          <div className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-4">
+              {mode === 'signup' && (
+                <>
+                  <div className="space-y-2">
+                    <Label>Account Type</Label>
+                    <div className="grid grid-cols-3 gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setRole('employee')}
+                        className={cn(
+                          "flex flex-col items-center justify-center gap-1 h-20 rounded-lg border-2 transition-all",
+                          role === 'employee'
+                            ? "border-primary bg-primary/5 text-primary"
+                            : "border-border bg-card text-muted-foreground hover:border-border/80"
+                        )}
+                      >
+                        <UserIcon className="h-4 w-4" />
+                        <span className="text-xs font-medium">Employee</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setRole('admin')}
+                        className={cn(
+                          "flex flex-col items-center justify-center gap-1 h-20 rounded-lg border-2 transition-all",
+                          role === 'admin'
+                            ? "border-primary bg-primary/5 text-primary"
+                            : "border-border bg-card text-muted-foreground hover:border-border/80"
+                        )}
+                      >
+                        <Shield className="h-4 w-4" />
+                        <span className="text-xs font-medium">Admin</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setRole('founder')}
+                        className={cn(
+                          "flex flex-col items-center justify-center gap-1 h-20 rounded-lg border-2 transition-all",
+                          role === 'founder'
+                            ? "border-primary bg-primary/5 text-primary"
+                            : "border-border bg-card text-muted-foreground hover:border-border/80"
+                        )}
+                      >
+                        <Crown className="h-4 w-4" />
+                        <span className="text-xs font-medium">Founder</span>
+                      </button>
                     </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="name">Full Name</Label>
-                      <Input
-                        id="name"
-                        placeholder="John Doe"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        required
-                        className="h-11"
-                      />
-                    </div>
-                  </>
-                )}
-
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="Enter your email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                    className="h-11"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="password">Password</Label>
-                  <div className="relative">
-                    <Input
-                      id="password"
-                      type={showPassword ? 'text' : 'password'}
-                      placeholder="Enter your password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      required
-                      className="h-11 pr-10"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-                    >
-                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                    </button>
                   </div>
-                </div>
 
-                <Button
-                  type="submit"
-                  disabled={isLoading}
-                  className="w-full h-11 gradient-dexaz hover:opacity-90 text-white font-medium"
-                >
-                  {isLoading ? (
-                    <span className="flex items-center gap-2">
-                      <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                      {mode === 'login' ? 'Signing in...' : 'Creating account...'}
-                    </span>
-                  ) : (
-                    <span className="flex items-center gap-2">
-                      <LogIn className="h-4 w-4" />
-                      {mode === 'login' ? 'Sign In' : 'Sign Up'}
-                    </span>
-                  )}
-                </Button>
-              </form>
+                  <div className="space-y-2">
+                    <Label htmlFor="name">Full Name</Label>
+                    <Input
+                      id="name"
+                      placeholder="John Doe"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      required
+                      className="h-11"
+                    />
+                  </div>
+                </>
+              )}
 
-              <div className="pt-6 border-t border-border flex flex-col items-center gap-4">
-                <p className="text-sm text-muted-foreground text-center">
-                  {mode === 'login' ? "Don't have an account?" : "Already have an account?"}
-                </p>
-                <Button
-                  variant="outline"
-                  className="w-full h-11"
-                  onClick={() => setMode(mode === 'login' ? 'signup' : 'login')}
-                >
-                  {mode === 'login' ? 'Create an Account' : 'Back to Login'}
-                </Button>
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="Enter your email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  className="h-11"
+                />
               </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="password">Password</Label>
+                <div className="relative">
+                  <Input
+                    id="password"
+                    type={showPassword ? 'text' : 'password'}
+                    placeholder="Enter your password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    className="h-11 pr-10"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
+              </div>
+
+              <Button
+                type="submit"
+                disabled={isLoading}
+                className="w-full h-11 gradient-dexaz hover:opacity-90 text-white font-medium"
+              >
+                {isLoading ? (
+                  <span className="flex items-center gap-2">
+                    <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    {mode === 'login' ? 'Signing in...' : 'Creating account...'}
+                  </span>
+                ) : (
+                  <span className="flex items-center gap-2">
+                    <LogIn className="h-4 w-4" />
+                    {mode === 'login' ? 'Sign In' : 'Sign Up'}
+                  </span>
+                )}
+              </Button>
+            </form>
+
+            <div className="pt-6 border-t border-border flex flex-col items-center gap-4">
+              <p className="text-sm text-muted-foreground text-center">
+                {mode === 'login' ? "Don't have an account?" : "Already have an account?"}
+              </p>
+              <Button
+                variant="outline"
+                className="w-full h-11"
+                onClick={() => setMode(mode === 'login' ? 'signup' : 'login')}
+              >
+                {mode === 'login' ? 'Create an Account' : 'Back to Login'}
+              </Button>
             </div>
           </div>
         </div>

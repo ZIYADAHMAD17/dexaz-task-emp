@@ -244,27 +244,31 @@ const DashboardPage: React.FC = () => {
               <TrendingUp className="h-5 w-5 text-primary" />
               Task Status Distribution
             </h3>
-            <div className="h-[300px]">
+            <div className="h-[250px] sm:h-[300px]">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
-                    data={taskDistribution}
+                    data={taskDistribution.length > 0 ? taskDistribution : [{ name: 'No Tasks', value: 1 }]}
                     cx="50%"
                     cy="50%"
-                    innerRadius={60}
-                    outerRadius={80}
+                    innerRadius={55}
+                    outerRadius={75}
                     paddingAngle={5}
                     dataKey="value"
                   >
-                    {taskDistribution.map((_, index) => (
-                      <Cell key={`cell-${index}`} fill={['#6366f1', '#10b981', '#f59e0b', '#ef4444'][index % 4]} />
-                    ))}
+                    {taskDistribution.length > 0 ? (
+                      taskDistribution.map((_, index) => (
+                        <Cell key={`cell-${index}`} fill={['#A855F7', '#EC4899', '#F97316', '#EF4444'][index % 4]} />
+                      ))
+                    ) : (
+                      <Cell fill="hsl(var(--muted))" />
+                    )}
                   </Pie>
                   <RechartsTooltip
                     contentStyle={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))', borderRadius: '8px' }}
                     itemStyle={{ color: 'hsl(var(--foreground))' }}
                   />
-                  <Legend verticalAlign="bottom" height={36} />
+                  <Legend verticalAlign="bottom" height={36} iconType="circle" />
                 </PieChart>
               </ResponsiveContainer>
             </div>
@@ -273,19 +277,28 @@ const DashboardPage: React.FC = () => {
           <div className="bg-card border border-border rounded-2xl p-6 shadow-sm">
             <h3 className="text-lg font-semibold mb-6 flex items-center gap-2">
               <Users className="h-5 w-5 text-primary" />
-              Employee Workload (Top 5)
+              Employee Workload
             </h3>
-            <div className="h-[300px]">
+            <div className="h-[250px] sm:h-[300px]">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={employeeWorkload}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
-                  <XAxis dataKey="name" fontSize={12} tickLine={false} axisLine={false} />
-                  <YAxis fontSize={12} tickLine={false} axisLine={false} />
+                  <XAxis
+                    dataKey="name"
+                    fontSize={10}
+                    tickLine={false}
+                    axisLine={false}
+                    interval={0}
+                    angle={-15}
+                    textAnchor="end"
+                    height={40}
+                  />
+                  <YAxis fontSize={10} tickLine={false} axisLine={false} width={25} />
                   <RechartsTooltip
                     cursor={{ fill: 'transparent' }}
                     contentStyle={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))', borderRadius: '8px' }}
                   />
-                  <Bar dataKey="tasks" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} barSize={40} />
+                  <Bar dataKey="tasks" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} barSize={30} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
