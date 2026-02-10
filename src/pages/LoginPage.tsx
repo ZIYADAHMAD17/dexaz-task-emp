@@ -73,14 +73,14 @@ const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex">
+    <div className="min-h-screen flex flex-col lg:flex-row overflow-y-auto">
       {/* Left Panel - Branding */}
       <div className="hidden lg:flex lg:w-1/2 gradient-dexaz relative overflow-hidden">
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3c0LnczLm9yZy8yMDAwL3N2ZyI+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48ZyBmaWxsPSIjZmZmZmZmIiBmaWxsLW9wYWNpdHk9IjAuMDUiPjxwYXRoIGQ9Ik0wIDBoMjB2MjBIL3oiLz48L2c+PC9nPg==')] opacity-50" />
+        <div className="absolute inset-0 bg-black/5" />
 
         <div className="relative z-10 flex flex-col justify-center items-center w-full p-12 text-center">
-          <div className="w-16 h-16 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center mb-8 shadow-soft">
-            <img src="/logo.png" alt="Dexaz Logo" className="w-10 h-10 object-contain" />
+          <div className="w-24 h-24 rounded-[2rem] overflow-hidden shadow-glow mb-8 border-4 border-white/20 animate-scale-in">
+            <img src="/logo.png" alt="Dexaz Logo" className="w-full h-full object-cover" />
           </div>
 
           <h1 className="text-4xl font-bold text-white mb-4">
@@ -108,12 +108,12 @@ const LoginPage: React.FC = () => {
       </div>
 
       {/* Right Panel - Form */}
-      <div className="flex-1 flex items-center justify-center p-4 sm:p-8 bg-background">
-        <div className="w-full max-w-[440px] animate-slide-up">
+      <div className="flex-1 flex items-center justify-center p-6 sm:p-12 bg-background min-h-full">
+        <div className="w-full max-w-[440px] animate-slide-up py-8 sm:py-0">
           {/* Mobile Logo & Header */}
-          <div className="text-center mb-8">
-            <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4 lg:hidden">
-              <img src="/logo.png" alt="Dexaz Logo" className="w-10 h-10 object-contain text-primary" />
+          <div className="text-center mb-6 sm:mb-8">
+            <div className="w-20 h-20 rounded-[1.5rem] overflow-hidden shadow-soft mx-auto mb-6 lg:hidden border-2 border-primary/20 animate-scale-in">
+              <img src="/logo.png" alt="Dexaz Logo" className="w-full h-full object-cover" />
             </div>
             <h2 className="text-3xl font-bold tracking-tight text-foreground">
               {mode === 'login' ? 'Welcome back' : 'Create account'}

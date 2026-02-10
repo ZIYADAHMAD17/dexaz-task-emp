@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Bell, Search, MessageCircle, Info, Megaphone, AlertTriangle, Calendar } from 'lucide-react';
+import { Bell, Search, MessageCircle, Info, Megaphone, AlertTriangle, Calendar, Menu } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -68,10 +68,22 @@ export const Header: React.FC<HeaderProps> = ({ title, subtitle }) => {
   };
 
   return (
-    <header className="h-16 bg-card/50 backdrop-blur-sm border-b border-border sticky top-0 z-30 px-6 flex items-center justify-between">
-      <div>
-        <h1 className="text-xl font-semibold text-foreground">{title}</h1>
-        {subtitle && <p className="text-sm text-muted-foreground">{subtitle}</p>}
+    <header className="h-16 bg-card/50 backdrop-blur-sm border-b border-border sticky top-0 z-30 px-4 sm:px-6 flex items-center justify-between">
+      <div className="flex items-center gap-3 overflow-hidden">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="lg:hidden flex-shrink-0"
+          onClick={() => {
+            window.dispatchEvent(new CustomEvent('toggle-sidebar'));
+          }}
+        >
+          <Menu className="h-5 w-5" />
+        </Button>
+        <div className="min-w-0 overflow-hidden">
+          <h1 className="text-lg sm:text-xl font-semibold text-foreground truncate">{title}</h1>
+          {subtitle && <p className="text-xs sm:text-sm text-muted-foreground truncate hidden xs:block">{subtitle}</p>}
+        </div>
       </div>
 
       <div className="flex items-center gap-4">
