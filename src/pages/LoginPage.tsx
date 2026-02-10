@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate, Navigate } from 'react-router-dom';
 import { Eye, EyeOff, LogIn } from 'lucide-react';
-import { useAuth } from '@/contexts/AuthContext';
+import { cn } from '@/lib/utils';
+import { useAuth, UserRole } from '@/contexts/AuthContext';
+import { Shield, User as UserIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -14,6 +16,7 @@ const LoginPage: React.FC = () => {
   const [name, setName] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [role, setRole] = useState<UserRole>('employee');
   const { login, signUp, isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -43,7 +46,7 @@ const LoginPage: React.FC = () => {
           });
         }
       } else {
-        const result = await signUp(email, password, name);
+        const result = await signUp(email, password, name, role);
         if (result.success) {
           toast({
             title: 'Account created!',
@@ -129,17 +132,51 @@ const LoginPage: React.FC = () => {
 
             <form onSubmit={handleSubmit} className="space-y-4">
               {mode === 'signup' && (
-                <div className="space-y-2">
-                  <Label htmlFor="name">Full Name</Label>
-                  <Input
-                    id="name"
-                    placeholder="John Doe"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    required
-                    className="h-11"
-                  />
-                </div>
+                <>
+                  <div className="space-y-2">
+                    <Label>Account Type</Label>
+                    <div className="grid grid-cols-2 gap-3">
+                      <button
+                        type="button"
+                        onClick={() => setRole('employee')}
+                        className={cn(
+                          "flex items-center justify-center gap-2 h-11 rounded-lg border-2 transition-all",
+                          role === 'employee'
+                            ? "border-primary bg-primary/5 text-primary"
+                            : "border-border bg-card text-muted-foreground hover:border-border/80"
+                        )}
+                      >
+                        <UserIcon className="h-4 w-4" />
+                        <span className="text-sm font-medium">Employee</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setRole('admin')}
+                        className={cn(
+                          "flex items-center justify-center gap-2 h-11 rounded-lg border-2 transition-all",
+                          role === 'admin'
+                            ? "border-primary bg-primary/5 text-primary"
+                            : "border-border bg-card text-muted-foreground hover:border-border/80"
+                        )}
+                      >
+                        <Shield className="h-4 w-4" />
+                        <span className="text-sm font-medium">Admin</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="name">Full Name</Label>
+                    <Input
+                      id="name"
+                      placeholder="John Doe"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      required
+                      className="h-11"
+                    />
+                  </div>
+                </>
               )}
 
               <div className="space-y-2">

@@ -118,6 +118,32 @@ const NoticesPage: React.FC = () => {
     }
   };
 
+  const handleDeleteNotice = async (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!window.confirm('Are you sure you want to delete this notice?')) return;
+
+    try {
+      const { error } = await supabase
+        .from('notices')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+
+      toast({
+        title: 'Notice deleted',
+        description: 'The notice has been removed successfully.',
+      });
+      fetchNotices();
+    } catch (error: any) {
+      toast({
+        title: 'Delete failed',
+        description: error.message,
+        variant: 'destructive',
+      });
+    }
+  };
+
   const getTypeIcon = (type: NoticeType) => {
     switch (type) {
       case 'announcement': return <Megaphone className="h-4 w-4" />;
@@ -286,7 +312,11 @@ const NoticesPage: React.FC = () => {
                       </h2>
                       <div className="grid gap-4">
                         {pinnedNotices.map((notice) => (
-                          <NoticeCard key={notice.id} notice={notice} />
+                          <NoticeCard
+                            key={notice.id}
+                            notice={notice}
+                            onDelete={isAdmin ? handleDeleteNotice : undefined}
+                          />
                         ))}
                       </div>
                     </div>
@@ -303,7 +333,11 @@ const NoticesPage: React.FC = () => {
                     ) : (
                       <div className="grid gap-4">
                         {(type === 'all' ? regularNotices : typeNotices).map((notice) => (
-                          <NoticeCard key={notice.id} notice={notice} />
+                          <NoticeCard
+                            key={notice.id}
+                            notice={notice}
+                            onDelete={isAdmin ? handleDeleteNotice : undefined}
+                          />
                         ))}
                       </div>
                     )}

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Bell, Megaphone, AlertTriangle, Info, Calendar, Pin } from 'lucide-react';
+import { Bell, Megaphone, AlertTriangle, Info, Calendar, Pin, Trash2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
@@ -22,6 +22,7 @@ export interface Notice {
 interface NoticeCardProps {
   notice: Notice;
   onClick?: () => void;
+  onDelete?: (id: string, e: React.MouseEvent) => void;
 }
 
 const typeConfig: Record<NoticeType, { icon: React.ReactNode; label: string; className: string }> = {
@@ -47,7 +48,7 @@ const typeConfig: Record<NoticeType, { icon: React.ReactNode; label: string; cla
   },
 };
 
-export const NoticeCard: React.FC<NoticeCardProps> = ({ notice, onClick }) => {
+export const NoticeCard: React.FC<NoticeCardProps> = ({ notice, onClick, onDelete }) => {
   const config = typeConfig[notice.type];
 
   const getInitials = (name: string) => {
@@ -55,7 +56,7 @@ export const NoticeCard: React.FC<NoticeCardProps> = ({ notice, onClick }) => {
   };
 
   return (
-    <div 
+    <div
       onClick={onClick}
       className={cn(
         'bg-card border border-border rounded-xl p-5 card-hover cursor-pointer relative',
@@ -63,16 +64,26 @@ export const NoticeCard: React.FC<NoticeCardProps> = ({ notice, onClick }) => {
       )}
     >
       {notice.isPinned && (
-        <div className="absolute top-3 right-3">
+        <div className="absolute top-3 right-3 flex items-center gap-2">
           <Pin className="h-4 w-4 text-primary rotate-45" />
         </div>
       )}
-      
+
+      {onDelete && (
+        <button
+          onClick={(e) => onDelete(notice.id, e)}
+          className="absolute top-3 right-3 p-1.5 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors z-10"
+          title="Delete notice"
+        >
+          <Trash2 className="h-4 w-4" />
+        </button>
+      )}
+
       <div className="flex items-start gap-4">
         <div className={cn('w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0', config.className)}>
           {config.icon}
         </div>
-        
+
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
             <Badge variant="secondary" className="text-xs">
@@ -80,10 +91,10 @@ export const NoticeCard: React.FC<NoticeCardProps> = ({ notice, onClick }) => {
             </Badge>
             <span className="text-xs text-muted-foreground">{notice.createdAt}</span>
           </div>
-          
+
           <h3 className="font-semibold text-foreground mb-2">{notice.title}</h3>
           <p className="text-sm text-muted-foreground line-clamp-2 mb-3">{notice.content}</p>
-          
+
           <div className="flex items-center gap-2">
             <Avatar className="h-6 w-6">
               <AvatarFallback className="text-xs bg-primary/10 text-primary">
