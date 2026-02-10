@@ -21,6 +21,12 @@
 
   <body>
     <div id="root"></div>
+    <script>
+      console.log("Index.html loaded, checking for root element:", !!document.getElementById("root"));
+      window.onerror = function(msg, url, line, col, error) {
+        console.error("Global Error:", msg, "at", url, ":", line);
+      };
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

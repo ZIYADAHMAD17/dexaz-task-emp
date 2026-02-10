@@ -64,20 +64,39 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   useEffect(() => {
+    // Safety timeout to ensure app doesn't stay white forever
+    const timer = setTimeout(() => {
+      if (loading) {
+        console.warn('Auth loading timed out, proceeding to render...');
+        setLoading(false);
+      }
+    }, 5000);
+
+    console.log('Initializing Auth Context...');
+
     // Check active sessions and sets the user
     supabase.auth.getSession().then(({ data: { session } }) => {
+      console.log('Session check complete:', session ? 'User logged in' : 'No session');
       if (session?.user) {
         fetchProfile(session.user.id, session.user.email!).then(profile => {
+          console.log('Profile fetch complete');
           setUser(profile);
           setLoading(false);
+          clearTimeout(timer);
         });
       } else {
         setLoading(false);
+        clearTimeout(timer);
       }
+    }).catch(err => {
+      console.error('Error getting session:', err);
+      setLoading(false);
+      clearTimeout(timer);
     });
 
     // Listen for changes on auth state (signed in, signed out, etc.)
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log('Auth state changed:', event);
       if (session?.user) {
         const profile = await fetchProfile(session.user.id, session.user.email!);
         setUser(profile);
@@ -87,7 +106,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       setLoading(false);
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      subscription.unsubscribe();
+      clearTimeout(timer);
+    };
   }, []);
 
   const login = async (email: string, password: string): Promise<{ success: boolean; error?: string }> => {
