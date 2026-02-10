@@ -30,25 +30,37 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [loading, setLoading] = useState(true);
 
   const fetchProfile = async (id: string, email: string) => {
+    console.log('Fetching profile for:', email);
+
+    // Create a fallback profile
+    const fallbackProfile = {
+      id,
+      name: email.split('@')[0],
+      email: email,
+      role: 'employee' as UserRole,
+      department: 'General',
+    };
+
     try {
-      const { data, error } = await supabase
+      // Use a Promise.race to timeout the fetch
+      const profilePromise = supabase
         .from('profiles')
         .select('*')
         .eq('id', id)
         .single();
 
+      const timeoutPromise = new Promise<{ data: any, error: any }>((_, reject) =>
+        setTimeout(() => reject(new Error('Profile fetch timeout')), 3000)
+      );
+
+      const { data, error } = await Promise.race([profilePromise, timeoutPromise]) as any;
+
       if (error) {
-        console.warn('Profile not found, using fallback session data:', error.message);
-        // Fallback to basic session info so they aren't kicked out
-        return {
-          id,
-          name: email.split('@')[0],
-          email: email,
-          role: 'employee' as UserRole,
-          department: 'General',
-        };
+        console.warn('Profile fetch error, using fallback:', error.message);
+        return fallbackProfile;
       }
 
+      console.log('Profile found in database');
       return {
         id: data.id,
         name: data.name || email.split('@')[0],
@@ -57,9 +69,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         avatar: data.avatar_url,
         department: data.department || 'General',
       };
-    } catch (err) {
-      console.error('Unexpected error fetching profile:', err);
-      return null;
+    } catch (err: any) {
+      console.warn('Profile fetch failed or timed out, using fallback:', err.message || err);
+      return fallbackProfile;
     }
   };
 
