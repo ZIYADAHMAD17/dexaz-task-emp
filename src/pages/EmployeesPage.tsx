@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Filter, Mail, Phone, Building, MoreHorizontal, UserPlus, Calendar, Briefcase } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Search, Filter, Mail, Phone, Building, MoreHorizontal, UserPlus, Calendar, Briefcase, User } from 'lucide-react';
 import { Header } from '@/components/layout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -55,9 +56,13 @@ const EmployeesPage: React.FC = () => {
   const [availableProfiles, setAvailableProfiles] = useState<ProfileOption[]>([]);
   const [loading, setLoading] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
+  const [isViewOpen, setIsViewOpen] = useState(false);
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { isAdmin } = useAuth();
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     profile_id: '',
@@ -65,7 +70,7 @@ const EmployeesPage: React.FC = () => {
     department: '',
     phone: '',
     joining_date: new Date().toISOString().split('T')[0],
-    status: 'active' as const,
+    status: 'active' as Employee['status'],
   });
 
   const fetchEmployees = async () => {
@@ -223,6 +228,64 @@ const EmployeesPage: React.FC = () => {
   const employeeTemplate = [
     { email: 'user@example.com', designation: 'Software Engineer', department: 'Engineering', phone: '+123456789', joining_date: '2024-01-01' }
   ];
+
+  const handleUpdateEmployee = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedEmployee) return;
+
+    setIsSubmitting(true);
+    try {
+      const { error } = await supabase
+        .from('employees')
+        .update({
+          designation: formData.designation,
+          department: formData.department,
+          phone: formData.phone,
+          joining_date: formData.joining_date,
+          status: formData.status,
+        })
+        .eq('id', selectedEmployee.id);
+
+      if (error) throw error;
+
+      toast({
+        title: 'Success',
+        description: 'Employee details updated successfully',
+      });
+      setIsEditOpen(false);
+      fetchEmployees();
+    } catch (error: any) {
+      toast({
+        title: 'Update failed',
+        description: error.message,
+        variant: 'destructive',
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const openEditModal = (employee: Employee) => {
+    setSelectedEmployee(employee);
+    setFormData({
+      profile_id: '',
+      designation: employee.role,
+      department: employee.department,
+      phone: employee.phone === 'N/A' ? '' : employee.phone,
+      joining_date: employee.joinDate === 'N/A' || !employee.joinDate.includes(' ') ? new Date().toISOString().split('T')[0] : new Date(employee.joinDate).toISOString().split('T')[0],
+      status: employee.status,
+    });
+    setIsEditOpen(true);
+  };
+
+  const openViewModal = (employee: Employee) => {
+    setSelectedEmployee(employee);
+    setIsViewOpen(true);
+  };
+
+  const handleSendMessage = (employee: Employee) => {
+    navigate('/messages', { state: { recipientId: employee.id, recipientName: employee.name } });
+  };
 
   const filteredEmployees = employeesData.filter(employee =>
     employee.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -440,9 +503,20 @@ const EmployeesPage: React.FC = () => {
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                      <DropdownMenuItem>View Profile</DropdownMenuItem>
-                      <DropdownMenuItem>Send Message</DropdownMenuItem>
-                      {isAdmin && <DropdownMenuItem>Edit Details</DropdownMenuItem>}
+                      <DropdownMenuItem onClick={() => openViewModal(employee)}>
+                        <User className="h-4 w-4 mr-2" />
+                        View Profile
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => handleSendMessage(employee)}>
+                        <Mail className="h-4 w-4 mr-2" />
+                        Send Message
+                      </DropdownMenuItem>
+                      {isAdmin && (
+                        <DropdownMenuItem onClick={() => openEditModal(employee)}>
+                          <Briefcase className="h-4 w-4 mr-2" />
+                          Edit Details
+                        </DropdownMenuItem>
+                      )}
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </div>
@@ -473,6 +547,168 @@ const EmployeesPage: React.FC = () => {
             )
             ))}
         </div>
+        {/* View Profile Modal */}
+        <Dialog open={isViewOpen} onOpenChange={setIsViewOpen}>
+          <DialogContent className="sm:max-w-[500px]">
+            <DialogHeader>
+              <DialogTitle>Employee Profile</DialogTitle>
+            </DialogHeader>
+            {selectedEmployee && (
+              <div className="py-6 space-y-6">
+                <div className="flex items-center gap-4">
+                  <Avatar className="h-20 w-20 border-2 border-primary/20">
+                    <AvatarFallback className="gradient-dexaz text-white text-2xl font-medium">
+                      {getInitials(selectedEmployee.name)}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <h2 className="text-xl font-bold text-foreground">{selectedEmployee.name}</h2>
+                    <p className="text-primary font-medium">{selectedEmployee.role}</p>
+                    <Badge variant="secondary" className="mt-1">
+                      {selectedEmployee.status}
+                    </Badge>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-6">
+                  <div className="space-y-1">
+                    <p className="text-xs text-muted-foreground uppercase tracking-wider font-bold">Department</p>
+                    <div className="flex items-center gap-2">
+                      <Building className="h-4 w-4 text-primary" />
+                      <span className="text-sm font-medium">{selectedEmployee.department}</span>
+                    </div>
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-xs text-muted-foreground uppercase tracking-wider font-bold">Email</p>
+                    <div className="flex items-center gap-2">
+                      <Mail className="h-4 w-4 text-primary" />
+                      <span className="text-sm font-medium">{selectedEmployee.email}</span>
+                    </div>
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-xs text-muted-foreground uppercase tracking-wider font-bold">Phone</p>
+                    <div className="flex items-center gap-2">
+                      <Phone className="h-4 w-4 text-primary" />
+                      <span className="text-sm font-medium">{selectedEmployee.phone}</span>
+                    </div>
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-xs text-muted-foreground uppercase tracking-wider font-bold">Joined</p>
+                    <div className="flex items-center gap-2">
+                      <Calendar className="h-4 w-4 text-primary" />
+                      <span className="text-sm font-medium">{selectedEmployee.joinDate}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="pt-4 flex gap-3">
+                  <Button className="flex-1 gradient-dexaz text-white" onClick={() => { setIsViewOpen(false); handleSendMessage(selectedEmployee); }}>
+                    <Mail className="h-4 w-4 mr-2" />
+                    Send Message
+                  </Button>
+                  {isAdmin && (
+                    <Button variant="outline" className="flex-1" onClick={() => { setIsViewOpen(false); openEditModal(selectedEmployee); }}>
+                      <Briefcase className="h-4 w-4 mr-2" />
+                      Edit Details
+                    </Button>
+                  )}
+                </div>
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
+
+        {/* Edit Details Modal */}
+        <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
+          <DialogContent className="sm:max-w-[500px]">
+            <DialogHeader>
+              <DialogTitle>Edit Employee Details</DialogTitle>
+            </DialogHeader>
+            <form onSubmit={handleUpdateEmployee} className="space-y-4 py-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="edit-designation">Designation</Label>
+                  <div className="relative">
+                    <Briefcase className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      id="edit-designation"
+                      className="pl-9"
+                      value={formData.designation}
+                      onChange={(e) => setFormData({ ...formData, designation: e.target.value })}
+                      required
+                    />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="edit-department">Department</Label>
+                  <div className="relative">
+                    <Building className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      id="edit-department"
+                      className="pl-9"
+                      value={formData.department}
+                      onChange={(e) => setFormData({ ...formData, department: e.target.value })}
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="edit-phone">Phone Number</Label>
+                  <div className="relative">
+                    <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      id="edit-phone"
+                      className="pl-9"
+                      value={formData.phone}
+                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                    />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="edit-status">Status</Label>
+                  <Select
+                    value={formData.status}
+                    onValueChange={(val) => setFormData({ ...formData, status: val as Employee['status'] })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="active">Active</SelectItem>
+                      <SelectItem value="away">Away</SelectItem>
+                      <SelectItem value="offline">Offline</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="edit-joining_date">Joining Date</Label>
+                <div className="relative">
+                  <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    id="edit-joining_date"
+                    type="date"
+                    className="pl-9"
+                    value={formData.joining_date}
+                    onChange={(e) => setFormData({ ...formData, joining_date: e.target.value })}
+                    required
+                  />
+                </div>
+              </div>
+
+              <DialogFooter className="pt-4">
+                <Button type="button" variant="outline" onClick={() => setIsEditOpen(false)}>Cancel</Button>
+                <Button type="submit" className="gradient-dexaz text-white" disabled={isSubmitting}>
+                  {isSubmitting ? 'Saving...' : 'Save Changes'}
+                </Button>
+              </DialogFooter>
+            </form>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
