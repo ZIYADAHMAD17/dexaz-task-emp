@@ -96,6 +96,28 @@ const LoginPage: React.FC = () => {
     <div className="min-h-screen flex bg-background overflow-hidden">
       {/* Left Panel - Hero Branding */}
       <div className="hidden lg:flex lg:w-1/2 relative bg-[#111827] overflow-hidden">
+        {/* Premium 3D Animated Background Grid */}
+        <div className="absolute inset-0 opacity-20">
+          <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+            <defs>
+              <linearGradient id="grid-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="hsl(var(--primary))" />
+                <stop offset="100%" stopColor="hsl(var(--dexaz-gradient-end))" />
+              </linearGradient>
+            </defs>
+            <motion.path
+              d="M0 20 L100 80 M20 0 L80 100 M0 50 L100 50 M50 0 L50 100"
+              stroke="url(#grid-grad)"
+              strokeWidth="0.1"
+              fill="none"
+              initial={{ pathLength: 0, opacity: 0 }}
+              animate={{ pathLength: 1, opacity: 1 }}
+              transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
+            />
+            <motion.circle cx="50" cy="50" r="1" fill="hsl(var(--primary))" initial={{ opacity: 0 }} animate={{ opacity: [0, 0.5, 0] }} transition={{ duration: 4, repeat: Infinity }} />
+          </svg>
+        </div>
+
         {/* Animated Background Blobs */}
         <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-primary/20 rounded-full blur-[120px] animate-pulse-soft" />
         <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] bg-blue-500/10 rounded-full blur-[120px] animate-pulse-soft" />
@@ -105,9 +127,9 @@ const LoginPage: React.FC = () => {
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ duration: 0.8 }}
-            className="w-20 h-20 rounded-[2rem] bg-gradient-to-br from-primary to-primary-dark p-0.5 shadow-2xl mb-12"
+            className="w-20 h-20 rounded-xl bg-gradient-to-br from-primary to-primary-dark p-0.5 shadow-2xl mb-12"
           >
-            <div className="w-full h-full rounded-[1.9rem] bg-white/10 backdrop-blur-sm flex items-center justify-center overflow-hidden">
+            <div className="w-full h-full rounded-[0.7rem] bg-white/10 backdrop-blur-sm flex items-center justify-center overflow-hidden">
               <img src="/logo.png" alt="Dexaz Logo" className="w-12 h-12 object-contain" />
             </div>
           </motion.div>
@@ -154,10 +176,10 @@ const LoginPage: React.FC = () => {
         >
           {/* Header */}
           <motion.div variants={itemVariants} className="mb-10 text-center lg:text-left">
-            <h2 className="text-3xl font-black text-[#111827] tracking-tight mb-2">
+            <h2 className="text-3xl font-black text-foreground tracking-tight mb-2 dark:text-white">
               {mode === 'login' ? 'Sign In' : 'Create Account'}
             </h2>
-            <p className="text-gray-500 font-medium">
+            <p className="text-muted-foreground font-medium">
               {mode === 'login'
                 ? 'Enter your credentials to access your dashboard'
                 : 'Join our premium platform today'}
@@ -284,7 +306,7 @@ const LoginPage: React.FC = () => {
           <motion.div variants={itemVariants} className="mt-10 text-center">
             <button
               onClick={() => setMode(mode === 'login' ? 'signup' : 'login')}
-              className="text-sm font-bold text-gray-500 hover:text-[#111827] transition-colors"
+              className="text-sm font-bold text-muted-foreground hover:text-foreground transition-colors dark:text-gray-400 dark:hover:text-white"
             >
               {mode === 'login' ? "Don't have an account?" : "Already a member?"}
               <span className="text-primary ml-1.5 uppercase tracking-wider text-[11px] font-black border-b-2 border-primary/30">

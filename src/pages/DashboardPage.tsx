@@ -202,7 +202,7 @@ const DashboardPage: React.FC = () => {
         className="p-6 sm:p-10 space-y-10"
       >
         <motion.div variants={itemVariants}>
-          <h1 className="text-2xl font-black text-[#212B36] tracking-tight">Hey, Welcome back</h1>
+          <h1 className="text-2xl font-black text-foreground tracking-tight dark:text-white">Hey, Welcome back</h1>
         </motion.div>
 
         {/* Stats Grid */}

@@ -134,7 +134,7 @@ export const Header: React.FC<HeaderProps> = ({ title, subtitle }) => {
                   <DropdownMenuItem
                     key={notice.id}
                     className="px-4 py-3 cursor-pointer hover:bg-secondary/50 rounded-xl mx-1 my-0.5 transition-all group"
-                    onClick={() => navigate('/notifications')}
+                    onClick={() => navigate('/notices')}
                   >
                     <div className="flex gap-4 items-start w-full">
                       <div className="h-9 w-9 rounded-full bg-secondary flex items-center justify-center flex-shrink-0 group-hover:bg-background transition-colors">
@@ -158,7 +158,7 @@ export const Header: React.FC<HeaderProps> = ({ title, subtitle }) => {
             </div>
             <DropdownMenuSeparator className="bg-border/50" />
             <div className="p-1">
-              <Link to="/notifications" className="w-full">
+              <Link to="/notices" className="w-full">
                 <Button variant="ghost" className="w-full h-10 rounded-xl text-xs font-black uppercase tracking-widest text-primary hover:bg-primary/5 hover:text-primary">
                   View All Notifications
                 </Button>
