@@ -62,7 +62,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle }) => {
         <div className="flex h-16 items-center px-6">
           <div className={cn('flex items-center gap-2 overflow-hidden', collapsed && 'justify-center w-full')}>
             <div className={cn(
-              "rounded-lg overflow-hidden flex-shrink-0 transition-all duration-300",
+              "rounded-xl overflow-hidden flex-shrink-0 transition-all duration-300 border border-sidebar-border bg-black",
               collapsed ? "w-8 h-8" : "w-10 h-10"
             )}>
               <img src="/logo.png" alt="Dexaz Logo" className="w-full h-full object-contain" />
@@ -76,7 +76,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle }) => {
         </div>
 
         {/* User Profile Card - Subtle background #F4F6F8 */}
-        <div className="px-5 mb-8">
+        <div className="px-5 mb-8 mt-4">
           <div className={cn(
             'flex items-center gap-3 p-4 rounded-xl bg-secondary/50',
             collapsed && 'justify-center p-2'
@@ -95,56 +95,30 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle }) => {
           </div>
         </div>
 
-        {/* Navigation - Grouped */}
-        <div className="flex-1 px-4 space-y-6 overflow-y-auto custom-scrollbar">
-          {/* General Section */}
-          <div className="space-y-1">
-            {!collapsed && <p className="px-4 text-[11px] font-black text-sidebar-muted uppercase tracking-wider mb-2">General</p>}
-            {navItems.filter(i => ['/dashboard', '/tasks', '/attendance', '/leaves', '/employees'].includes(i.to)).map((item) => {
-              const isActive = location.pathname === item.to;
-              const Icon = item.icon;
-              return (
-                <NavLink
-                  key={item.to}
-                  to={item.to}
-                  className={cn(
-                    'flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200',
-                    isActive
-                      ? 'bg-sidebar-accent text-sidebar-accent-foreground'
-                      : 'text-sidebar-foreground/60 hover:bg-sidebar-accent/30 hover:text-sidebar-foreground'
-                  )}
-                >
-                  <Icon className={cn('h-5 w-5', isActive ? 'text-sidebar-primary' : 'text-sidebar-foreground/60')} />
-                  {!collapsed && <span className="animate-fade-in">{item.label}</span>}
-                </NavLink>
-              );
-            })}
-          </div>
+        {/* Navigation - Simplified without headers */}
+        <nav className="flex-1 px-4 space-y-1 overflow-y-auto custom-scrollbar">
+          {navItems.map((item) => {
+            const isActive = location.pathname === item.to;
+            const Icon = item.icon;
 
-          {/* Management Section */}
-          <div className="space-y-1">
-            {!collapsed && <p className="px-4 text-[11px] font-black text-sidebar-muted uppercase tracking-wider mb-2">Management</p>}
-            {navItems.filter(i => !['/dashboard', '/tasks', '/attendance', '/leaves', '/employees'].includes(i.to)).map((item) => {
-              const isActive = location.pathname === item.to;
-              const Icon = item.icon;
-              return (
-                <NavLink
-                  key={item.to}
-                  to={item.to}
-                  className={cn(
-                    'flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200',
-                    isActive
-                      ? 'bg-sidebar-accent text-sidebar-accent-foreground'
-                      : 'text-sidebar-foreground/60 hover:bg-sidebar-accent/30 hover:text-sidebar-foreground'
-                  )}
-                >
-                  <Icon className={cn('h-5 w-5', isActive ? 'text-sidebar-primary' : 'text-sidebar-foreground/60')} />
-                  {!collapsed && <span className="animate-fade-in">{item.label}</span>}
-                </NavLink>
-              );
-            })}
-          </div>
-        </div>
+            return (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                className={cn(
+                  'flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200',
+                  isActive
+                    ? 'bg-sidebar-accent text-sidebar-accent-foreground'
+                    : 'text-sidebar-foreground/60 hover:bg-sidebar-accent/30 hover:text-sidebar-foreground',
+                  collapsed && 'justify-center px-2'
+                )}
+              >
+                <Icon className={cn('h-5 w-5', isActive ? 'text-sidebar-primary' : 'text-sidebar-foreground/60')} />
+                {!collapsed && <span className="animate-fade-in">{item.label}</span>}
+              </NavLink>
+            );
+          })}
+        </nav>
 
         {/* Bottom Section */}
         <div className="p-4 border-t border-sidebar-border">
