@@ -179,12 +179,13 @@ const DashboardPage: React.FC = () => {
 
   return (
     <div className="min-h-screen">
-      <Header
-        title={`Welcome back, ${user?.name?.split(' ')[0] || 'User'}!`}
-        subtitle="Here's what's happening with your team today."
-      />
+      <Header title="" />
 
-      <div className="p-6 space-y-6">
+      <div className="p-8 sm:p-12 space-y-10">
+        <div>
+          <h1 className="text-2xl font-black text-[#212B36] tracking-tight">Hey, Welcome back</h1>
+          <p className="text-sm font-semibold text-muted-foreground/60 mt-1 uppercase tracking-wider">Dashboard Overview</p>
+        </div>
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <StatsCard

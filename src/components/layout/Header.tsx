@@ -68,8 +68,8 @@ export const Header: React.FC<HeaderProps> = ({ title, subtitle }) => {
   };
 
   return (
-    <header className="h-20 bg-background/80 backdrop-blur-md border-b border-border/40 sticky top-0 z-30 px-6 sm:px-10 flex items-center justify-between">
-      <div className="flex items-center gap-6 overflow-hidden">
+    <header className="h-24 bg-background/80 backdrop-blur-md border-b border-border/20 sticky top-0 z-30 px-6 sm:px-12 flex items-center justify-between">
+      <div className="flex items-center gap-8 overflow-hidden">
         <Button
           variant="ghost"
           size="icon"
@@ -80,56 +80,53 @@ export const Header: React.FC<HeaderProps> = ({ title, subtitle }) => {
         >
           <Menu className="h-6 w-6" />
         </Button>
-        <div className="min-w-0 overflow-hidden">
-          <h1 className="text-2xl font-black text-foreground tracking-tight truncate">{title}</h1>
-          {subtitle && <p className="text-sm font-medium text-muted-foreground truncate hidden xs:block">{subtitle}</p>}
+
+        {/* Search - Wide Pill Shape */}
+        <div className="relative hidden md:block">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search..."
+            className="pl-[44px] w-[320px] lg:w-[480px] h-11 bg-secondary/40 border-transparent focus:border-primary/20 focus:bg-card rounded-2xl transition-all"
+          />
         </div>
       </div>
 
-      <div className="flex items-center gap-4">
-        {/* Search */}
-        <div className="relative hidden md:block">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search..."
-            className="pl-9 w-64 bg-secondary/50 border-transparent focus:border-primary/30 focus:bg-card"
-          />
-        </div>
-
+      {/* Right Side Icons */}
+      <div className="flex items-center gap-4 sm:gap-6">
         {/* Notifications */}
         <DropdownMenu onOpenChange={(open) => {
           if (open) setUnreadCount(0);
         }}>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon" className="relative hover:bg-secondary">
+            <Button variant="ghost" size="icon" className="relative hover:bg-secondary h-11 w-11 rounded-2xl">
               <Bell className="h-5 w-5 text-muted-foreground" />
               {unreadCount > 0 && (
-                <Badge className="absolute -top-1 -right-1 h-5 w-5 p-0 flex items-center justify-center text-xs gradient-dexaz border-0 animate-scale-in">
+                <Badge className="absolute top-2 right-2 h-4 w-4 p-0 flex items-center justify-center text-[10px] font-bold bg-primary text-white border-2 border-background animate-scale-in">
                   {unreadCount}
                 </Badge>
               )}
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-80 p-2">
-            <DropdownMenuLabel className="flex items-center justify-between px-2 py-1.5 focus:bg-accent focus:text-accent-foreground outline-none transition-colors">
-              Notifications
-              {unreadCount > 0 && <Badge variant="secondary" className="text-[10px] h-4">{unreadCount} New</Badge>}
+          <DropdownMenuContent align="end" className="w-80 p-2 rounded-2xl">
+            <DropdownMenuLabel className="flex items-center justify-between px-2 py-2">
+              <span className="font-bold">Notifications</span>
+              {unreadCount > 0 && <Badge variant="secondary" className="text-[10px] h-4 font-bold">{unreadCount} New</Badge>}
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             {recentNotices.length > 0 ? (
-              <div className="max-h-[300px] overflow-y-auto">
+              <div className="max-h-[320px] overflow-y-auto custom-scrollbar">
                 {recentNotices.map((notice) => (
                   <DropdownMenuItem key={notice.id} asChild className="p-0">
                     <Link
                       to="/notices"
-                      className="flex items-start gap-3 p-3 cursor-pointer hover:bg-secondary/50 transition-colors rounded-lg"
+                      className="flex items-start gap-4 p-4 cursor-pointer hover:bg-secondary/40 transition-colors rounded-xl"
                     >
                       <div className="mt-1">
                         {getNoticeIcon(notice.type)}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-foreground truncate">{notice.title}</p>
-                        <p className="text-xs text-muted-foreground mt-0.5">
+                        <p className="text-sm font-bold text-foreground truncate">{notice.title}</p>
+                        <p className="text-[10px] font-medium text-muted-foreground mt-1 uppercase tracking-wider">
                           {new Date(notice.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
                         </p>
                       </div>
@@ -138,33 +135,33 @@ export const Header: React.FC<HeaderProps> = ({ title, subtitle }) => {
                 ))}
               </div>
             ) : (
-              <div className="py-8 text-center">
-                <p className="text-sm text-muted-foreground">No new notifications</p>
+              <div className="py-12 text-center">
+                <p className="text-sm text-muted-foreground uppercase font-black tracking-widest opacity-30">No notifications</p>
               </div>
             )}
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild className="p-0">
               <Link
                 to="/notices"
-                className="w-full text-center py-2 text-xs font-medium text-primary hover:bg-primary/5 transition-colors rounded-lg"
+                className="w-full text-center py-3 text-xs font-black uppercase tracking-widest text-primary hover:bg-primary/5 transition-colors rounded-xl"
               >
-                View all notices
+                View all notifications
               </Link>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
 
         {/* Quick Chat */}
-        <Button variant="ghost" size="icon" className="hover:bg-secondary">
+        <Button variant="ghost" size="icon" className="hover:bg-secondary h-11 w-11 rounded-2xl">
           <MessageCircle className="h-5 w-5 text-muted-foreground" />
         </Button>
 
         {/* Current Date */}
-        <div className="hidden lg:block text-right">
-          <p className="text-sm font-medium text-foreground">
+        <div className="hidden xl:block text-right ml-4">
+          <p className="text-sm font-bold text-foreground leading-none mb-1">
             {new Date().toLocaleDateString('en-US', { weekday: 'long' })}
           </p>
-          <p className="text-xs text-muted-foreground">
+          <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">
             {new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
           </p>
         </div>

@@ -11,40 +11,40 @@
 
 @layer base {
   :root {
-    /* Core backgrounds */
-    --background: 210 25% 99%;
-    --foreground: 222 47% 11%;
+    /* Core backgrounds - matching #F4F6F8 */
+    --background: 210 24% 97%;
+    --foreground: 221 43% 11%;
 
-    /* Cards - Clean White with soft styling */
+    /* Cards - Pure White as in reference */
     --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
+    --card-foreground: 221 43% 11%;
 
     /* Popovers */
     --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
+    --popover-foreground: 221 43% 11%;
 
-    /* Primary - Reference Emerald Green */
-    --primary: 142 76% 36%;
+    /* Primary - Emerald Green from reference #00AB55 */
+    --primary: 150 100% 33.5%;
     --primary-foreground: 0 0% 100%;
 
-    /* Secondary - Very Light Blue-Grey */
-    --secondary: 210 33% 98%;
-    --secondary-foreground: 222 47% 11%;
+    /* Secondary - Light Grey used for cards/sections #919EAB (muted) and #F4F6F8 (bg) */
+    --secondary: 210 20% 96%;
+    --secondary-foreground: 221 43% 11%;
 
-    /* Muted elements */
-    --muted: 210 20% 97%;
-    --muted-foreground: 215 16% 47%;
+    /* Muted elements #919EAB */
+    --muted: 208 18% 62%;
+    --muted-foreground: 208 18% 45%;
 
-    /* Accent - Reference Green for Active States */
-    --accent: 142 71% 95%;
-    --accent-foreground: 142 76% 36%;
+    /* Accent - Reference Mint for Active States #EBF9F1 background and #00AB55 text */
+    --accent: 144 50% 95%;
+    --accent-foreground: 150 100% 33.5%;
 
-    /* Destructive - Coral Red */
+    /* Destructive - Vivid Red */
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    /* Success - Reference Green */
-    --success: 142 76% 36%;
+    /* Success - Same as Primary/Reference Green */
+    --success: 150 100% 33.5%;
     --success-foreground: 0 0% 100%;
 
     /* Warning - Amber */
@@ -55,23 +55,23 @@
     --info: 199 89% 48%;
     --info-foreground: 0 0% 100%;
 
-    /* Borders and inputs - Very faint */
-    --border: 210 33% 95%;
-    --input: 210 33% 95%;
-    --ring: 142 76% 36%;
+    /* Borders and inputs - Very soft */
+    --border: 210 20% 94%;
+    --input: 210 20% 94%;
+    --ring: 150 100% 33.5%;
 
-    --radius: 1.25rem;
+    --radius: 0.75rem;
 
-    /* Sidebar - Pure White (from reference) */
+    /* Sidebar - Pure White with specific reference colors */
     --sidebar-background: 0 0% 100%;
     --sidebar-foreground: 222 47% 11%;
-    --sidebar-primary: 142 76% 36%;
+    --sidebar-primary: 150 100% 33.5%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 142 71% 95%;
-    --sidebar-accent-foreground: 142 76% 36%;
-    --sidebar-border: 210 33% 97%;
-    --sidebar-ring: 142 76% 36%;
-    --sidebar-muted: 215 16% 47%;
+    --sidebar-accent: 144 55% 95.5%;
+    --sidebar-accent-foreground: 150 100% 33.5%;
+    --sidebar-border: 210 20% 95%;
+    --sidebar-ring: 150 100% 33.5%;
+    --sidebar-muted: 210 18% 62%;
 
     /* Custom Dexaz colors - Kept for gradients but updated for consistency */
     --dexaz-gradient-start: 142 76% 36%;

@@ -58,82 +58,93 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle }) => {
           collapsed ? 'w-20 -translate-x-full lg:translate-x-0' : 'w-64 translate-x-0'
         )}
       >
-        {/* Logo Section */}
-        <div className="flex h-24 items-center px-6 mb-2">
-          <div className={cn('flex items-center gap-3 overflow-hidden', collapsed && 'justify-center w-full')}>
+        {/* Logo Section - Fixed at the very top left */}
+        <div className="flex h-16 items-center px-6">
+          <div className={cn('flex items-center gap-2 overflow-hidden', collapsed && 'justify-center w-full')}>
             <div className={cn(
-              "rounded-xl overflow-hidden flex-shrink-0 transition-all duration-300",
-              collapsed ? "w-10 h-10" : "w-12 h-12"
+              "rounded-lg overflow-hidden flex-shrink-0 transition-all duration-300",
+              collapsed ? "w-8 h-8" : "w-10 h-10"
             )}>
               <img src="/logo.png" alt="Dexaz Logo" className="w-full h-full object-contain" />
             </div>
             {!collapsed && (
               <div className="animate-fade-in">
-                <h1 className="text-sidebar-foreground font-bold text-2xl tracking-tighter">Dexaz</h1>
+                <h1 className="text-sidebar-foreground font-bold text-xl tracking-tight">Dexaz</h1>
               </div>
             )}
           </div>
         </div>
 
-        {/* User Profile Section */}
-        <div className="px-4 mb-4">
+        {/* User Profile Card - Subtle background #F4F6F8 */}
+        <div className="px-5 mb-8">
           <div className={cn(
-            'flex items-center gap-3 p-3 rounded-2xl bg-secondary/30',
+            'flex items-center gap-3 p-4 rounded-xl bg-secondary/50',
             collapsed && 'justify-center p-2'
           )}>
-            <Avatar className="h-10 w-10 border-2 border-background shadow-sm">
-              <AvatarFallback className="bg-primary text-primary-foreground text-sm font-bold">
+            <Avatar className="h-10 w-10 ring-2 ring-background shadow-sm">
+              <AvatarFallback className="bg-primary text-primary-foreground text-xs font-bold">
                 {user ? getInitials(user.name) : 'U'}
               </AvatarFallback>
             </Avatar>
             {!collapsed && (
               <div className="flex-1 min-w-0 animate-fade-in">
                 <p className="text-sm font-bold text-sidebar-foreground truncate">{user?.name}</p>
-                <p className="text-[10px] uppercase tracking-wider text-sidebar-muted font-bold truncate">{user?.role}</p>
+                <p className="text-[11px] font-medium text-sidebar-muted truncate">{user?.role}</p>
               </div>
             )}
           </div>
         </div>
 
-        {/* Navigation */}
-        <nav className="flex-1 px-4 space-y-1 overflow-y-auto">
-          {navItems.map((item) => {
-            const isActive = location.pathname === item.to;
-            const Icon = item.icon;
-
-            const linkContent = (
-              <NavLink
-                key={item.to}
-                to={item.to}
-                className={cn(
-                  'flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200',
-                  isActive
-                    ? 'bg-sidebar-accent text-sidebar-accent-foreground shadow-sm'
-                    : 'text-sidebar-foreground/60 hover:bg-sidebar-accent/30 hover:text-sidebar-foreground',
-                  collapsed && 'justify-center px-2'
-                )}
-              >
-                <Icon className={cn('h-5 w-5 flex-shrink-0', isActive ? 'text-sidebar-primary' : 'text-sidebar-foreground/60')} />
-                {!collapsed && <span className="animate-fade-in">{item.label}</span>}
-              </NavLink>
-            );
-
-            if (collapsed) {
+        {/* Navigation - Grouped */}
+        <div className="flex-1 px-4 space-y-6 overflow-y-auto custom-scrollbar">
+          {/* General Section */}
+          <div className="space-y-1">
+            {!collapsed && <p className="px-4 text-[11px] font-black text-sidebar-muted uppercase tracking-wider mb-2">General</p>}
+            {navItems.filter(i => ['/dashboard', '/tasks', '/attendance', '/leaves', '/employees'].includes(i.to)).map((item) => {
+              const isActive = location.pathname === item.to;
+              const Icon = item.icon;
               return (
-                <Tooltip key={item.to} delayDuration={0}>
-                  <TooltipTrigger asChild>
-                    {linkContent}
-                  </TooltipTrigger>
-                  <TooltipContent side="right" className="font-medium">
-                    {item.label}
-                  </TooltipContent>
-                </Tooltip>
+                <NavLink
+                  key={item.to}
+                  to={item.to}
+                  className={cn(
+                    'flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200',
+                    isActive
+                      ? 'bg-sidebar-accent text-sidebar-accent-foreground'
+                      : 'text-sidebar-foreground/60 hover:bg-sidebar-accent/30 hover:text-sidebar-foreground'
+                  )}
+                >
+                  <Icon className={cn('h-5 w-5', isActive ? 'text-sidebar-primary' : 'text-sidebar-foreground/60')} />
+                  {!collapsed && <span className="animate-fade-in">{item.label}</span>}
+                </NavLink>
               );
-            }
+            })}
+          </div>
 
-            return linkContent;
-          })}
-        </nav>
+          {/* Management Section */}
+          <div className="space-y-1">
+            {!collapsed && <p className="px-4 text-[11px] font-black text-sidebar-muted uppercase tracking-wider mb-2">Management</p>}
+            {navItems.filter(i => !['/dashboard', '/tasks', '/attendance', '/leaves', '/employees'].includes(i.to)).map((item) => {
+              const isActive = location.pathname === item.to;
+              const Icon = item.icon;
+              return (
+                <NavLink
+                  key={item.to}
+                  to={item.to}
+                  className={cn(
+                    'flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200',
+                    isActive
+                      ? 'bg-sidebar-accent text-sidebar-accent-foreground'
+                      : 'text-sidebar-foreground/60 hover:bg-sidebar-accent/30 hover:text-sidebar-foreground'
+                  )}
+                >
+                  <Icon className={cn('h-5 w-5', isActive ? 'text-sidebar-primary' : 'text-sidebar-foreground/60')} />
+                  {!collapsed && <span className="animate-fade-in">{item.label}</span>}
+                </NavLink>
+              );
+            })}
+          </div>
+        </div>
 
         {/* Bottom Section */}
         <div className="p-4 border-t border-sidebar-border">
