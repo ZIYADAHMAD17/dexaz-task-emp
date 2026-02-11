@@ -32,7 +32,15 @@ const NoticesPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [editingNotice, setEditingNotice] = useState<Notice | null>(null);
   const [newNotice, setNewNotice] = useState({
+    title: '',
+    content: '',
+    type: 'announcement' as NoticeType,
+    isPinned: false,
+  });
+  const [editFormData, setEditFormData] = useState({
     title: '',
     content: '',
     type: 'announcement' as NoticeType,
@@ -118,6 +126,45 @@ const NoticesPage: React.FC = () => {
     }
   };
 
+  const handleEditClick = (notice: Notice) => {
+    setEditingNotice(notice);
+    setEditFormData({
+      title: notice.title,
+      content: notice.content,
+      type: notice.type,
+      isPinned: notice.isPinned,
+    });
+    setIsEditDialogOpen(true);
+  };
+
+  const handleUpdateNotice = async () => {
+    if (!editingNotice || !editFormData.title.trim() || !editFormData.content.trim()) return;
+
+    try {
+      const { error } = await supabase
+        .from('notices')
+        .update({
+          title: editFormData.title,
+          content: editFormData.content,
+          type: editFormData.type,
+          is_pinned: editFormData.isPinned,
+        })
+        .eq('id', editingNotice.id);
+
+      if (error) throw error;
+
+      fetchNotices();
+      setIsEditDialogOpen(false);
+      setEditingNotice(null);
+      toast({
+        title: 'Notice updated',
+        description: 'Your changes have been saved successfully.',
+      });
+    } catch (error: any) {
+      toast({ title: 'Update failed', description: error.message, variant: 'destructive' });
+    }
+  };
+
   const handleDeleteNotice = async (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
     if (!window.confirm('Are you sure you want to delete this notice?')) return;
@@ -179,91 +226,171 @@ const NoticesPage: React.FC = () => {
           </div>
 
           {isAdmin && (
-            <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-              <DialogTrigger asChild>
-                <Button className="gradient-dexaz text-white">
-                  <Plus className="h-4 w-4 mr-2" />
-                  Post Notice
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-lg">
-                <DialogHeader>
-                  <DialogTitle>Post New Notice</DialogTitle>
-                </DialogHeader>
-                <div className="space-y-4 pt-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="title">Title</Label>
-                    <Input
-                      id="title"
-                      value={newNotice.title}
-                      onChange={(e) => setNewNotice({ ...newNotice, title: e.target.value })}
-                      placeholder="Enter notice title"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="content">Content</Label>
-                    <Textarea
-                      id="content"
-                      value={newNotice.content}
-                      onChange={(e) => setNewNotice({ ...newNotice, content: e.target.value })}
-                      placeholder="Enter notice content"
-                      rows={4}
-                    />
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label>Type</Label>
-                      <Select
-                        value={newNotice.type}
-                        onValueChange={(value: NoticeType) => setNewNotice({ ...newNotice, type: value })}
-                      >
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="announcement">
-                            <span className="flex items-center gap-2">
-                              <Megaphone className="h-4 w-4" /> Announcement
-                            </span>
-                          </SelectItem>
-                          <SelectItem value="urgent">
-                            <span className="flex items-center gap-2">
-                              <AlertTriangle className="h-4 w-4" /> Urgent
-                            </span>
-                          </SelectItem>
-                          <SelectItem value="event">
-                            <span className="flex items-center gap-2">
-                              <Calendar className="h-4 w-4" /> Event
-                            </span>
-                          </SelectItem>
-                          <SelectItem value="info">
-                            <span className="flex items-center gap-2">
-                              <Info className="h-4 w-4" /> Info
-                            </span>
-                          </SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="flex items-center justify-between p-3 rounded-lg border border-border">
-                      <Label htmlFor="pinned" className="cursor-pointer">
-                        <div className="flex items-center gap-2">
-                          <Pin className="h-4 w-4" />
-                          <span>Pin Notice</span>
-                        </div>
-                      </Label>
-                      <Switch
-                        id="pinned"
-                        checked={newNotice.isPinned}
-                        onCheckedChange={(checked) => setNewNotice({ ...newNotice, isPinned: checked })}
-                      />
-                    </div>
-                  </div>
-                  <Button onClick={handleAddNotice} className="w-full gradient-dexaz text-white">
+            <>
+              <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button className="gradient-dexaz text-white">
+                    <Plus className="h-4 w-4 mr-2" />
                     Post Notice
                   </Button>
-                </div>
-              </DialogContent>
-            </Dialog>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-lg">
+                  <DialogHeader>
+                    <DialogTitle>Post New Notice</DialogTitle>
+                  </DialogHeader>
+                  <div className="space-y-4 pt-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="title">Title</Label>
+                      <Input
+                        id="title"
+                        value={newNotice.title}
+                        onChange={(e) => setNewNotice({ ...newNotice, title: e.target.value })}
+                        placeholder="Enter notice title"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="content">Content</Label>
+                      <Textarea
+                        id="content"
+                        value={newNotice.content}
+                        onChange={(e) => setNewNotice({ ...newNotice, content: e.target.value })}
+                        placeholder="Enter notice content"
+                        rows={4}
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label>Type</Label>
+                        <Select
+                          value={newNotice.type}
+                          onValueChange={(value: NoticeType) => setNewNotice({ ...newNotice, type: value })}
+                        >
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="announcement">
+                              <span className="flex items-center gap-2">
+                                <Megaphone className="h-4 w-4" /> Announcement
+                              </span>
+                            </SelectItem>
+                            <SelectItem value="urgent">
+                              <span className="flex items-center gap-2">
+                                <AlertTriangle className="h-4 w-4" /> Urgent
+                              </span>
+                            </SelectItem>
+                            <SelectItem value="event">
+                              <span className="flex items-center gap-2">
+                                <Calendar className="h-4 w-4" /> Event
+                              </span>
+                            </SelectItem>
+                            <SelectItem value="info">
+                              <span className="flex items-center gap-2">
+                                <Info className="h-4 w-4" /> Info
+                              </span>
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="flex items-center justify-between p-3 rounded-lg border border-border">
+                        <Label htmlFor="pinned" className="cursor-pointer">
+                          <div className="flex items-center gap-2">
+                            <Pin className="h-4 w-4" />
+                            <span>Pin Notice</span>
+                          </div>
+                        </Label>
+                        <Switch
+                          id="pinned"
+                          checked={newNotice.isPinned}
+                          onCheckedChange={(checked) => setNewNotice({ ...newNotice, isPinned: checked })}
+                        />
+                      </div>
+                    </div>
+                    <Button onClick={handleAddNotice} className="w-full gradient-dexaz text-white">
+                      Post Notice
+                    </Button>
+                  </div>
+                </DialogContent>
+              </Dialog>
+
+              <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+                <DialogContent className="sm:max-w-lg">
+                  <DialogHeader>
+                    <DialogTitle>Edit Notice</DialogTitle>
+                  </DialogHeader>
+                  <div className="space-y-4 pt-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="edit-title">Title</Label>
+                      <Input
+                        id="edit-title"
+                        value={editFormData.title}
+                        onChange={(e) => setEditFormData({ ...editFormData, title: e.target.value })}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="edit-content">Content</Label>
+                      <Textarea
+                        id="edit-content"
+                        value={editFormData.content}
+                        onChange={(e) => setEditFormData({ ...editFormData, content: e.target.value })}
+                        rows={4}
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label>Type</Label>
+                        <Select
+                          value={editFormData.type}
+                          onValueChange={(value: NoticeType) => setEditFormData({ ...editFormData, type: value })}
+                        >
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="announcement">
+                              <span className="flex items-center gap-2">
+                                <Megaphone className="h-4 w-4" /> Announcement
+                              </span>
+                            </SelectItem>
+                            <SelectItem value="urgent">
+                              <span className="flex items-center gap-2">
+                                <AlertTriangle className="h-4 w-4" /> Urgent
+                              </span>
+                            </SelectItem>
+                            <SelectItem value="event">
+                              <span className="flex items-center gap-2">
+                                <Calendar className="h-4 w-4" /> Event
+                              </span>
+                            </SelectItem>
+                            <SelectItem value="info">
+                              <span className="flex items-center gap-2">
+                                <Info className="h-4 w-4" /> Info
+                              </span>
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="flex items-center justify-between p-3 rounded-lg border border-border">
+                        <Label htmlFor="edit-pinned" className="cursor-pointer">
+                          <div className="flex items-center gap-2">
+                            <Pin className="h-4 w-4" />
+                            <span>Pin Notice</span>
+                          </div>
+                        </Label>
+                        <Switch
+                          id="edit-pinned"
+                          checked={editFormData.isPinned}
+                          onCheckedChange={(checked) => setEditFormData({ ...editFormData, isPinned: checked })}
+                        />
+                      </div>
+                    </div>
+                    <Button onClick={handleUpdateNotice} className="w-full gradient-dexaz text-white">
+                      Save Changes
+                    </Button>
+                  </div>
+                </DialogContent>
+              </Dialog>
+            </>
           )}
         </div>
 
@@ -315,6 +442,7 @@ const NoticesPage: React.FC = () => {
                           <NoticeCard
                             key={notice.id}
                             notice={notice}
+                            onEdit={isAdmin ? handleEditClick : undefined}
                             onDelete={isAdmin ? handleDeleteNotice : undefined}
                           />
                         ))}
@@ -336,6 +464,7 @@ const NoticesPage: React.FC = () => {
                           <NoticeCard
                             key={notice.id}
                             notice={notice}
+                            onEdit={isAdmin ? handleEditClick : undefined}
                             onDelete={isAdmin ? handleDeleteNotice : undefined}
                           />
                         ))}

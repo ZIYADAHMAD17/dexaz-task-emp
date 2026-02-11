@@ -31,7 +31,15 @@ const TasksPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [newTask, setNewTask] = useState({
+    title: '',
+    description: '',
+    priority: 'medium' as TaskPriority,
+    dueDate: '',
+  });
+  const [editFormData, setEditFormData] = useState({
     title: '',
     description: '',
     priority: 'medium' as TaskPriority,
@@ -153,6 +161,55 @@ const TasksPage: React.FC = () => {
     }
   };
 
+  const handleEditClick = (task: Task) => {
+    setEditingTask(task);
+    // Convert 'May 15, 2024' back to 'YYYY-MM-DD' for input[type=date] if possible
+    // For simplicity, we'll just use the raw date or empty if it fails
+    let formattedDate = '';
+    if (task.dueDate && task.dueDate !== 'TBD') {
+      try {
+        const date = new Date(task.dueDate);
+        formattedDate = date.toISOString().split('T')[0];
+      } catch (e) { }
+    }
+
+    setEditFormData({
+      title: task.title,
+      description: task.description,
+      priority: task.priority,
+      dueDate: formattedDate,
+    });
+    setIsEditDialogOpen(true);
+  };
+
+  const handleUpdateTask = async () => {
+    if (!editingTask || !editFormData.title.trim()) return;
+
+    try {
+      const { error } = await supabase
+        .from('tasks')
+        .update({
+          title: editFormData.title,
+          description: editFormData.description,
+          priority: editFormData.priority,
+          due_date: editFormData.dueDate || null,
+        })
+        .eq('id', editingTask.id);
+
+      if (error) throw error;
+
+      fetchTasks();
+      setIsEditDialogOpen(false);
+      setEditingTask(null);
+      toast({
+        title: 'Task updated',
+        description: 'Task changes have been saved.',
+      });
+    } catch (error: any) {
+      toast({ title: 'Update failed', description: error.message, variant: 'destructive' });
+    }
+  };
+
   return (
     <div className="min-h-screen">
       <Header
@@ -199,70 +256,129 @@ const TasksPage: React.FC = () => {
             </div>
 
             {isAdmin && (
-              <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-                <DialogTrigger asChild>
-                  <Button className="gradient-dexaz text-white">
-                    <Plus className="h-4 w-4 mr-2" />
-                    Add Task
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-md">
-                  <DialogHeader>
-                    <DialogTitle>Create New Task</DialogTitle>
-                  </DialogHeader>
-                  <div className="space-y-4 pt-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="title">Title</Label>
-                      <Input
-                        id="title"
-                        value={newTask.title}
-                        onChange={(e) => setNewTask({ ...newTask, title: e.target.value })}
-                        placeholder="Enter task title"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="description">Description</Label>
-                      <Textarea
-                        id="description"
-                        value={newTask.description}
-                        onChange={(e) => setNewTask({ ...newTask, description: e.target.value })}
-                        placeholder="Enter task description"
-                        rows={3}
-                      />
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
+              <>
+                <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+                  <DialogTrigger asChild>
+                    <Button className="gradient-dexaz text-white">
+                      <Plus className="h-4 w-4 mr-2" />
+                      Add Task
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-md">
+                    <DialogHeader>
+                      <DialogTitle>Create New Task</DialogTitle>
+                    </DialogHeader>
+                    <div className="space-y-4 pt-4">
                       <div className="space-y-2">
-                        <Label>Priority</Label>
-                        <Select
-                          value={newTask.priority}
-                          onValueChange={(value: TaskPriority) => setNewTask({ ...newTask, priority: value })}
-                        >
-                          <SelectTrigger>
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="low">Low</SelectItem>
-                            <SelectItem value="medium">Medium</SelectItem>
-                            <SelectItem value="high">High</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="dueDate">Due Date</Label>
+                        <Label htmlFor="title">Title</Label>
                         <Input
-                          id="dueDate"
-                          type="date"
-                          value={newTask.dueDate}
-                          onChange={(e) => setNewTask({ ...newTask, dueDate: e.target.value })}
+                          id="title"
+                          value={newTask.title}
+                          onChange={(e) => setNewTask({ ...newTask, title: e.target.value })}
+                          placeholder="Enter task title"
                         />
                       </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="description">Description</Label>
+                        <Textarea
+                          id="description"
+                          value={newTask.description}
+                          onChange={(e) => setNewTask({ ...newTask, description: e.target.value })}
+                          placeholder="Enter task description"
+                          rows={3}
+                        />
+                      </div>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label>Priority</Label>
+                          <Select
+                            value={newTask.priority}
+                            onValueChange={(value: TaskPriority) => setNewTask({ ...newTask, priority: value })}
+                          >
+                            <SelectTrigger>
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="low">Low</SelectItem>
+                              <SelectItem value="medium">Medium</SelectItem>
+                              <SelectItem value="high">High</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="dueDate">Due Date</Label>
+                          <Input
+                            id="dueDate"
+                            type="date"
+                            value={newTask.dueDate}
+                            onChange={(e) => setNewTask({ ...newTask, dueDate: e.target.value })}
+                          />
+                        </div>
+                      </div>
+                      <Button onClick={handleAddTask} className="w-full gradient-dexaz text-white">
+                        Create Task
+                      </Button>
                     </div>
-                    <Button onClick={handleAddTask} className="w-full gradient-dexaz text-white">
-                      Create Task
-                    </Button>
-                  </div>
-                </DialogContent>
-              </Dialog>
+                  </DialogContent>
+                </Dialog>
+
+                <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+                  <DialogContent className="sm:max-w-md">
+                    <DialogHeader>
+                      <DialogTitle>Edit Task</DialogTitle>
+                    </DialogHeader>
+                    <div className="space-y-4 pt-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="edit-title">Title</Label>
+                        <Input
+                          id="edit-title"
+                          value={editFormData.title}
+                          onChange={(e) => setEditFormData({ ...editFormData, title: e.target.value })}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="edit-description">Description</Label>
+                        <Textarea
+                          id="edit-description"
+                          value={editFormData.description}
+                          onChange={(e) => setEditFormData({ ...editFormData, description: e.target.value })}
+                          rows={3}
+                        />
+                      </div>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label>Priority</Label>
+                          <Select
+                            value={editFormData.priority}
+                            onValueChange={(value: TaskPriority) => setEditFormData({ ...editFormData, priority: value })}
+                          >
+                            <SelectTrigger>
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="low">Low</SelectItem>
+                              <SelectItem value="medium">Medium</SelectItem>
+                              <SelectItem value="high">High</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="edit-dueDate">Due Date</Label>
+                          <Input
+                            id="edit-dueDate"
+                            type="date"
+                            value={editFormData.dueDate}
+                            onChange={(e) => setEditFormData({ ...editFormData, dueDate: e.target.value })}
+                          />
+                        </div>
+                      </div>
+                      <Button onClick={handleUpdateTask} className="w-full gradient-dexaz text-white">
+                        Save Changes
+                      </Button>
+                    </div>
+                  </DialogContent>
+                </Dialog>
+              </>
             )}
           </div>
         </div>
@@ -296,6 +412,7 @@ const TasksPage: React.FC = () => {
                       key={task.id}
                       task={task}
                       onStatusChange={handleStatusChange}
+                      onEdit={handleEditClick}
                       onDelete={handleDelete}
                     />
                   ))}

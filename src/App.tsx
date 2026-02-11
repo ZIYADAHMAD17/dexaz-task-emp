@@ -14,6 +14,8 @@ import EmployeesPage from "./pages/EmployeesPage";
 import SettingsPage from "./pages/SettingsPage";
 import AttendancePage from "./pages/AttendancePage";
 import LeaveManagementPage from "./pages/LeaveManagementPage";
+import SearchResultsPage from "./pages/SearchResultsPage";
+import MessagesPage from "./pages/MessagesPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -37,6 +39,8 @@ const App = () => (
                 <Route path="/attendance" element={<AttendancePage />} />
                 <Route path="/leave-management" element={<LeaveManagementPage />} />
                 <Route path="/settings" element={<SettingsPage />} />
+                <Route path="/search" element={<SearchResultsPage />} />
+                <Route path="/messages" element={<MessagesPage />} />
               </Route>
               <Route path="*" element={<NotFound />} />
             </Routes>

@@ -13,7 +13,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 interface HeaderProps {
   title: string;
@@ -24,6 +24,15 @@ export const Header: React.FC<HeaderProps> = ({ title, subtitle }) => {
   const { user } = useAuth();
   const [recentNotices, setRecentNotices] = useState<any[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [searchQuery, setSearchQuery] = useState('');
+  const navigate = useNavigate();
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+    }
+  };
 
   useEffect(() => {
     const fetchRecentNotices = async () => {
@@ -82,13 +91,15 @@ export const Header: React.FC<HeaderProps> = ({ title, subtitle }) => {
         </Button>
 
         {/* Search - Wide Pill Shape */}
-        <div className="relative hidden md:block">
+        <form onSubmit={handleSearch} className="relative hidden md:block">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder="Search..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-[44px] w-[320px] lg:w-[480px] h-11 bg-secondary/40 border-transparent focus:border-primary/20 focus:bg-card rounded-2xl transition-all"
           />
-        </div>
+        </form>
       </div>
 
       {/* Right Side Icons */}
@@ -152,7 +163,12 @@ export const Header: React.FC<HeaderProps> = ({ title, subtitle }) => {
         </DropdownMenu>
 
         {/* Quick Chat */}
-        <Button variant="ghost" size="icon" className="hover:bg-secondary h-11 w-11 rounded-2xl">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="hover:bg-secondary h-11 w-11 rounded-2xl"
+          onClick={() => navigate('/messages')}
+        >
           <MessageCircle className="h-5 w-5 text-muted-foreground" />
         </Button>
 

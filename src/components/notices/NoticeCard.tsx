@@ -1,5 +1,5 @@
 import React from 'react';
-import { Bell, Megaphone, AlertTriangle, Info, Calendar, Pin, Trash2 } from 'lucide-react';
+import { Bell, Megaphone, AlertTriangle, Info, Calendar, Pin, Trash2, Edit2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
@@ -22,6 +22,7 @@ export interface Notice {
 interface NoticeCardProps {
   notice: Notice;
   onClick?: () => void;
+  onEdit?: (notice: Notice) => void;
   onDelete?: (id: string, e: React.MouseEvent) => void;
 }
 
@@ -48,7 +49,7 @@ const typeConfig: Record<NoticeType, { icon: React.ReactNode; label: string; cla
   },
 };
 
-export const NoticeCard: React.FC<NoticeCardProps> = ({ notice, onClick, onDelete }) => {
+export const NoticeCard: React.FC<NoticeCardProps> = ({ notice, onClick, onEdit, onDelete }) => {
   const config = typeConfig[notice.type];
 
   const getInitials = (name: string) => {
@@ -69,25 +70,39 @@ export const NoticeCard: React.FC<NoticeCardProps> = ({ notice, onClick, onDelet
         </div>
       )}
 
-      {onDelete && (
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            onDelete(notice.id, e);
-          }}
-          className="absolute top-4 right-4 p-2 rounded-full text-muted-foreground hover:text-destructive hover:bg-destructive/10 opacity-0 group-hover:opacity-100 transition-all z-10"
-          title="Delete notice"
-        >
-          <Trash2 className="h-4 w-4" />
-        </button>
-      )}
+      <div className="absolute top-4 right-4 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all z-10">
+        {onEdit && (
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onEdit(notice);
+            }}
+            className="p-2 rounded-full text-muted-foreground hover:text-primary hover:bg-primary/10"
+            title="Edit notice"
+          >
+            <Edit2 className="h-4 w-4" />
+          </button>
+        )}
+        {onDelete && (
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onDelete(notice.id, e);
+            }}
+            className="p-2 rounded-full text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+            title="Delete notice"
+          >
+            <Trash2 className="h-4 w-4" />
+          </button>
+        )}
+      </div>
 
       <div className="flex items-start gap-4">
         <div className={cn('w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0', config.className.includes('bg-') ? 'bg-opacity-20 ' + config.className.replace('text-white', '') : 'bg-primary/10')}>
           {React.cloneElement(config.icon as React.ReactElement, { className: cn((config.icon as React.ReactElement).props.className, "text-primary") })}
         </div>
 
-        <div className="flex-1 min-w-0">
+        <div className="flex-1 min-w-0 pr-12 group-hover:pr-20 transition-all"> {/* Add padding to prevent overlap */}
           <div className="flex items-center justify-between mb-2">
             <Badge variant="outline" className="text-[10px] font-black uppercase tracking-widest px-2 py-0.5 border-primary/20 bg-primary/5 text-primary">
               {config.label}
