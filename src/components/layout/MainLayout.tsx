@@ -33,7 +33,7 @@ export const MainLayout: React.FC = () => {
       <main
         className={cn(
           'flex-1 min-h-screen transition-all duration-300 w-full min-w-0',
-          sidebarCollapsed ? 'lg:ml-20' : 'lg:ml-64'
+          sidebarCollapsed ? 'lg:ml-20' : 'lg:ml-[250px]'
         )}
       >
         <Outlet />

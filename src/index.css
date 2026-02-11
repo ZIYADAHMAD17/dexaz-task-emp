@@ -11,67 +11,44 @@
 
 @layer base {
   :root {
-    /* Core backgrounds - matching #F4F6F8 */
-    --background: 210 24% 97%;
-    --foreground: 221 43% 11%;
+    /* Core backgrounds - matching #F5F7FA */
+    --background: 220 33% 98%;
+    --foreground: 222 47% 11%;
 
-    /* Cards - Pure White as in reference */
+    /* Cards - Pure White */
     --card: 0 0% 100%;
-    --card-foreground: 221 43% 11%;
+    --card-foreground: 222 47% 11%;
 
-    /* Popovers */
-    --popover: 0 0% 100%;
-    --popover-foreground: 221 43% 11%;
-
-    /* Primary - Emerald Green from reference #00AB55 */
-    --primary: 150 100% 33.5%;
+    /* Primary - PRD Green #22C55E */
+    --primary: 142 71% 45%;
     --primary-foreground: 0 0% 100%;
 
-    /* Secondary - Light Grey used for cards/sections #919EAB (muted) and #F4F6F8 (bg) */
+    /* Secondary - #F3F4F6 */
     --secondary: 210 20% 96%;
-    --secondary-foreground: 221 43% 11%;
+    --secondary-foreground: 222 47% 11%;
 
-    /* Muted elements #919EAB */
-    --muted: 208 18% 62%;
-    --muted-foreground: 208 18% 45%;
+    /* Muted elements #6B7280 */
+    --muted: 215 14% 46%;
+    --muted-foreground: 215 16% 47%;
 
-    /* Accent - Reference Mint for Active States #EBF9F1 background and #00AB55 text */
-    --accent: 144 50% 95%;
-    --accent-foreground: 150 100% 33.5%;
+    /* Accent - Light Active #DCFCE7 */
+    --accent: 142 77% 92%;
+    --accent-foreground: 142 76% 36%;
 
-    /* Destructive - Vivid Red */
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 100%;
-
-    /* Success - Same as Primary/Reference Green */
-    --success: 150 100% 33.5%;
-    --success-foreground: 0 0% 100%;
-
-    /* Warning - Amber */
-    --warning: 38 92% 50%;
-    --warning-foreground: 0 0% 100%;
-
-    /* Info - Sky Blue */
-    --info: 199 89% 48%;
-    --info-foreground: 0 0% 100%;
-
-    /* Borders and inputs - Very soft */
-    --border: 210 20% 94%;
-    --input: 210 20% 94%;
-    --ring: 150 100% 33.5%;
+    /* Borders and inputs #E5E7EB */
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 142 71% 45%;
 
     --radius: 0.75rem;
+    /* Base 12px */
 
-    /* Sidebar - Pure White with specific reference colors */
+    /* Sidebar specific */
     --sidebar-background: 0 0% 100%;
     --sidebar-foreground: 222 47% 11%;
-    --sidebar-primary: 150 100% 33.5%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 144 55% 95.5%;
-    --sidebar-accent-foreground: 150 100% 33.5%;
-    --sidebar-border: 210 20% 95%;
-    --sidebar-ring: 150 100% 33.5%;
-    --sidebar-muted: 210 18% 62%;
+    --sidebar-primary: 142 71% 45%;
+    --sidebar-accent: 142 77% 92%;
+    --sidebar-accent-foreground: 142 71% 45%;
 
     /* Custom Dexaz colors - Kept for gradients but updated for consistency */
     --dexaz-gradient-start: 142 76% 36%;
@@ -202,14 +179,47 @@
     box-shadow: 0 0 40px -10px hsl(var(--accent) / 0.4);
   }
 
+  /* Custom shadows from PRD */
+  .shadow-sidebar {
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.04);
+  }
+
+  .shadow-card {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+  }
+
+  .shadow-hover {
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+  }
+
+  .shadow-login {
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.06);
+  }
+
+  /* Specific border radius */
+  .rounded-card {
+    border-radius: 16px;
+  }
+
+  .rounded-btn {
+    border-radius: 12px;
+  }
+
+  .rounded-input {
+    border-radius: 12px;
+  }
+
+  .rounded-login {
+    border-radius: 20px;
+  }
+
   /* Card hover effect */
   .card-hover {
-    @apply transition-all duration-300 ease-out;
+    @apply transition-all duration-300 ease-out shadow-card;
   }
 
   .card-hover:hover {
-    @apply -translate-y-1 shadow-lg;
-    box-shadow: 0 20px 40px -15px hsl(var(--primary) / 0.15);
+    @apply -translate-y-[3px] shadow-hover;
   }
 
   /* Status badges */

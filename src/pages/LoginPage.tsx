@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate, Navigate } from 'react-router-dom';
-import { Eye, EyeOff, LogIn } from 'lucide-react';
+import { Eye, EyeOff, LogIn, Shield, User as UserIcon, Crown, ArrowRight } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { useAuth, UserRole } from '@/contexts/AuthContext';
-import { Shield, User as UserIcon, Crown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -72,188 +72,231 @@ const LoginPage: React.FC = () => {
     }
   };
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        duration: 0.8,
+        staggerChildren: 0.1
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: { duration: 0.5 }
+    }
+  };
+
   return (
-    <div className="min-h-screen flex flex-col lg:flex-row overflow-y-auto">
-      {/* Left Panel - Branding */}
-      <div className="hidden lg:flex lg:w-1/2 gradient-dexaz relative overflow-hidden">
-        <div className="absolute inset-0 bg-black/5" />
+    <div className="min-h-screen flex bg-white overflow-hidden">
+      {/* Left Panel - Hero Branding */}
+      <div className="hidden lg:flex lg:w-1/2 relative bg-[#111827] overflow-hidden">
+        {/* Animated Background Blobs */}
+        <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-primary/20 rounded-full blur-[120px] animate-pulse-soft" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] bg-blue-500/10 rounded-full blur-[120px] animate-pulse-soft" />
 
-        <div className="relative z-10 flex flex-col justify-center items-center w-full p-12 text-center">
-          <div className="w-24 h-24 rounded-[2rem] overflow-hidden shadow-glow mb-8 border-4 border-white/20 animate-scale-in">
-            <img src="/logo.png" alt="Dexaz Logo" className="w-full h-full object-cover" />
-          </div>
+        <div className="relative z-10 flex flex-col justify-center px-16 xl:px-24 w-full">
+          <motion.div
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 0.8 }}
+            className="w-20 h-20 rounded-[2rem] bg-gradient-to-br from-primary to-primary-dark p-0.5 shadow-2xl mb-12"
+          >
+            <div className="w-full h-full rounded-[1.9rem] bg-[#111827] flex items-center justify-center overflow-hidden">
+              <img src="/logo.png" alt="Dexaz Logo" className="w-12 h-12 object-contain" />
+            </div>
+          </motion.div>
 
-          <h1 className="text-4xl font-bold text-white mb-4">
-            Dexaz Emp System
-          </h1>
-          <p className="text-white/80 text-lg max-w-md">
-            Modern employee management platform. Streamline your workforce, boost productivity.
-          </p>
+          <motion.div
+            initial={{ x: -30, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            transition={{ delay: 0.2, duration: 0.8 }}
+          >
+            <h1 className="text-5xl xl:text-6xl font-black text-white leading-[1.1] mb-6 tracking-tight">
+              Elevate Your <br />
+              <span className="text-primary">Workspace.</span>
+            </h1>
+            <p className="text-gray-400 text-lg xl:text-xl max-w-md font-medium leading-relaxed">
+              Experience the next generation of employee management. Optimized for performance and precision.
+            </p>
+          </motion.div>
 
-          <div className="mt-12 grid grid-cols-3 gap-8 text-center">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.6 }}
+            className="mt-20 grid grid-cols-2 gap-10"
+          >
             <div>
-              <p className="text-3xl font-bold text-white">500+</p>
-              <p className="text-white/60 text-sm">Employees</p>
+              <p className="text-3xl font-black text-white mb-1">500+</p>
+              <p className="text-gray-500 text-sm font-bold uppercase tracking-widest">Global Clients</p>
             </div>
             <div>
-              <p className="text-3xl font-bold text-white">98%</p>
-              <p className="text-white/60 text-sm">Satisfaction</p>
+              <p className="text-3xl font-black text-white mb-1">99.9%</p>
+              <p className="text-gray-500 text-sm font-bold uppercase tracking-widest">Uptime Record</p>
             </div>
-            <div>
-              <p className="text-3xl font-bold text-white">24/7</p>
-              <p className="text-white/60 text-sm">Support</p>
-            </div>
-          </div>
+          </motion.div>
         </div>
       </div>
 
       {/* Right Panel - Form */}
-      <div className="flex-1 flex items-center justify-center p-6 sm:p-12 bg-background min-h-full">
-        <div className="w-full max-w-[440px] animate-slide-up py-8 sm:py-0">
-          {/* Mobile Logo & Header */}
-          <div className="text-center mb-6 sm:mb-8">
-            <div className="w-20 h-20 rounded-[1.5rem] overflow-hidden shadow-soft mx-auto mb-6 lg:hidden border-2 border-primary/20 animate-scale-in">
-              <img src="/logo.png" alt="Dexaz Logo" className="w-full h-full object-cover" />
-            </div>
-            <h2 className="text-3xl font-bold tracking-tight text-foreground">
-              {mode === 'login' ? 'Welcome back' : 'Create account'}
+      <div className="flex-1 flex flex-col items-center justify-center p-6 sm:p-12 relative">
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={containerVariants}
+          className="w-full max-w-[420px]"
+        >
+          {/* Header */}
+          <motion.div variants={itemVariants} className="mb-10 text-center lg:text-left">
+            <h2 className="text-3xl font-black text-[#111827] tracking-tight mb-2">
+              {mode === 'login' ? 'Sign In' : 'Create Account'}
             </h2>
-            <p className="text-muted-foreground mt-2">
+            <p className="text-gray-500 font-medium">
               {mode === 'login'
-                ? 'Sign in to your account to continue'
-                : 'Enter your details to get started'}
+                ? 'Enter your credentials to access your dashboard'
+                : 'Join our premium platform today'}
             </p>
-          </div>
-          <div className="space-y-6">
-            <form onSubmit={handleSubmit} className="space-y-4">
+          </motion.div>
+
+          {/* Form */}
+          <motion.form
+            variants={itemVariants}
+            onSubmit={handleSubmit}
+            className="space-y-5"
+          >
+            <AnimatePresence mode="wait">
               {mode === 'signup' && (
-                <>
+                <motion.div
+                  key="signup-fields"
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: 'auto', opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  className="space-y-5 overflow-hidden"
+                >
                   <div className="space-y-2">
-                    <Label>Account Type</Label>
-                    <div className="grid grid-cols-3 gap-2">
-                      <button
-                        type="button"
-                        onClick={() => setRole('employee')}
-                        className={cn(
-                          "flex flex-col items-center justify-center gap-1 h-20 rounded-lg border-2 transition-all",
-                          role === 'employee'
-                            ? "border-primary bg-primary/5 text-primary"
-                            : "border-border bg-card text-muted-foreground hover:border-border/80"
-                        )}
-                      >
-                        <UserIcon className="h-4 w-4" />
-                        <span className="text-xs font-medium">Employee</span>
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setRole('admin')}
-                        className={cn(
-                          "flex flex-col items-center justify-center gap-1 h-20 rounded-lg border-2 transition-all",
-                          role === 'admin'
-                            ? "border-primary bg-primary/5 text-primary"
-                            : "border-border bg-card text-muted-foreground hover:border-border/80"
-                        )}
-                      >
-                        <Shield className="h-4 w-4" />
-                        <span className="text-xs font-medium">Admin</span>
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setRole('founder')}
-                        className={cn(
-                          "flex flex-col items-center justify-center gap-1 h-20 rounded-lg border-2 transition-all",
-                          role === 'founder'
-                            ? "border-primary bg-primary/5 text-primary"
-                            : "border-border bg-card text-muted-foreground hover:border-border/80"
-                        )}
-                      >
-                        <Crown className="h-4 w-4" />
-                        <span className="text-xs font-medium">Founder</span>
-                      </button>
+                    <Label className="text-xs font-black uppercase tracking-widest text-gray-400 ml-1">Account Type</Label>
+                    <div className="grid grid-cols-3 gap-3">
+                      {[
+                        { id: 'employee', label: 'Staff', icon: UserIcon },
+                        { id: 'admin', label: 'Admin', icon: Shield },
+                        { id: 'founder', label: 'Owner', icon: Crown },
+                      ].map((item) => (
+                        <button
+                          key={item.id}
+                          type="button"
+                          onClick={() => setRole(item.id as UserRole)}
+                          className={cn(
+                            "flex flex-col items-center justify-center gap-2 h-20 rounded-2xl border-2 transition-all duration-300",
+                            role === item.id
+                              ? "border-primary bg-primary/5 text-primary shadow-sm"
+                              : "border-gray-100 bg-gray-50 text-gray-400 hover:border-gray-200"
+                          )}
+                        >
+                          <item.icon className="h-4 w-4" />
+                          <span className="text-[10px] font-black uppercase">{item.label}</span>
+                        </button>
+                      ))}
                     </div>
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="name">Full Name</Label>
+                    <Label className="text-xs font-black uppercase tracking-widest text-gray-400 ml-1">Full Name</Label>
                     <Input
-                      id="name"
-                      placeholder="John Doe"
+                      placeholder="e.g. John Doe"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       required
-                      className="h-11"
+                      className="h-12 bg-[#F3F4F6] border-none rounded-xl focus-visible:ring-1 focus-visible:ring-primary/20 transition-all font-medium px-4"
                     />
                   </div>
-                </>
+                </motion.div>
               )}
+            </AnimatePresence>
 
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="Enter your email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  className="h-11"
-                />
-              </div>
+            <div className="space-y-2">
+              <Label className="text-xs font-black uppercase tracking-widest text-gray-400 ml-1">Email Address</Label>
+              <Input
+                type="email"
+                placeholder="yours@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                className="h-12 bg-[#F3F4F6] border-none rounded-xl focus-visible:ring-1 focus-visible:ring-primary/20 transition-all font-medium px-4"
+              />
+            </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
-                <div className="relative">
-                  <Input
-                    id="password"
-                    type={showPassword ? 'text' : 'password'}
-                    placeholder="Enter your password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                    className="h-11 pr-10"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            <div className="space-y-2">
+              <div className="flex justify-between items-center ml-1">
+                <Label className="text-xs font-black uppercase tracking-widest text-gray-400">Password</Label>
+                {mode === 'login' && (
+                  <button type="button" className="text-[10px] font-black uppercase tracking-widest text-primary hover:underline">
+                    Forgot?
                   </button>
-                </div>
+                )}
               </div>
+              <div className="relative">
+                <Input
+                  type={showPassword ? 'text' : 'password'}
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  className="h-12 bg-[#F3F4F6] border-none rounded-xl focus-visible:ring-1 focus-visible:ring-primary/20 transition-all font-medium px-4 pr-12"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                >
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
+              </div>
+            </div>
 
+            <motion.div variants={itemVariants} className="pt-4">
               <Button
                 type="submit"
                 disabled={isLoading}
-                className="w-full h-11 gradient-dexaz hover:opacity-90 text-white font-medium"
+                className="w-full h-12 bg-primary hover:bg-primary/90 text-white rounded-xl font-black uppercase tracking-widest text-xs shadow-lg shadow-primary/20 transition-all hover:scale-[1.01] active:scale-[0.98]"
               >
                 {isLoading ? (
-                  <span className="flex items-center gap-2">
-                    <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                    {mode === 'login' ? 'Signing in...' : 'Creating account...'}
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    <span>Processing...</span>
+                  </div>
                 ) : (
-                  <span className="flex items-center gap-2">
-                    <LogIn className="h-4 w-4" />
-                    {mode === 'login' ? 'Sign In' : 'Sign Up'}
-                  </span>
+                  <div className="flex items-center gap-2">
+                    {mode === 'login' ? 'Secure Login' : 'Create Account'}
+                    <ArrowRight className="h-4 w-4" />
+                  </div>
                 )}
               </Button>
-            </form>
+            </motion.div>
+          </motion.form>
 
-            <div className="pt-6 border-t border-border flex flex-col items-center gap-4">
-              <p className="text-sm text-muted-foreground text-center">
-                {mode === 'login' ? "Don't have an account?" : "Already have an account?"}
-              </p>
-              <Button
-                variant="outline"
-                className="w-full h-11"
-                onClick={() => setMode(mode === 'login' ? 'signup' : 'login')}
-              >
-                {mode === 'login' ? 'Create an Account' : 'Back to Login'}
-              </Button>
-            </div>
-          </div>
+          {/* Footer Toggle */}
+          <motion.div variants={itemVariants} className="mt-10 text-center">
+            <button
+              onClick={() => setMode(mode === 'login' ? 'signup' : 'login')}
+              className="text-sm font-bold text-gray-500 hover:text-[#111827] transition-colors"
+            >
+              {mode === 'login' ? "Don't have an account?" : "Already a member?"}
+              <span className="text-primary ml-1.5 uppercase tracking-wider text-[11px] font-black border-b-2 border-primary/30">
+                {mode === 'login' ? 'Create Account' : 'Sign In Now'}
+              </span>
+            </button>
+          </motion.div>
+        </motion.div>
+
+        {/* Global Footer Credit */}
+        <div className="absolute bottom-8 text-[10px] font-black uppercase tracking-widest text-gray-300">
+          © 2026 Dexaz Systems • All Rights Reserved
         </div>
       </div>
     </div>

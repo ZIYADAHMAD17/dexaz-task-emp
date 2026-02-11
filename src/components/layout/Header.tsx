@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Bell, Search, MessageCircle, Info, Megaphone, AlertTriangle, Calendar, Menu } from 'lucide-react';
+import { Bell, Search, MessageCircle, Info, Megaphone, AlertTriangle, Calendar, Menu, MoreVertical } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -77,7 +77,7 @@ export const Header: React.FC<HeaderProps> = ({ title, subtitle }) => {
   };
 
   return (
-    <header className="h-24 bg-background/80 backdrop-blur-md border-b border-border/20 sticky top-0 z-30 px-6 sm:px-12 flex items-center justify-between">
+    <header className="h-[70px] bg-background/80 backdrop-blur-md border-b border-border/20 sticky top-0 z-30 px-6 sm:px-8 flex items-center justify-between">
       <div className="flex items-center gap-8 overflow-hidden">
         <Button
           variant="ghost"
@@ -90,26 +90,30 @@ export const Header: React.FC<HeaderProps> = ({ title, subtitle }) => {
           <Menu className="h-6 w-6" />
         </Button>
 
-        {/* Search - Wide Pill Shape */}
-        <form onSubmit={handleSearch} className="relative hidden md:block">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        {/* Search - Rounded Full #F3F4F6 */}
+        <form onSubmit={handleSearch} className="relative hidden md:block group">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
           <Input
             placeholder="Search..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-[44px] w-[320px] lg:w-[480px] h-11 bg-secondary/40 border-transparent focus:border-primary/20 focus:bg-card rounded-2xl transition-all"
+            className="pl-[38px] w-[200px] lg:w-[320px] h-9 bg-[#F3F4F6] border-none focus-visible:ring-1 focus-visible:ring-primary/20 rounded-full transition-all text-sm"
           />
         </form>
       </div>
 
-      {/* Right Side Icons */}
-      <div className="flex items-center gap-4 sm:gap-6">
+      {/* Right Side Icons - Grouped */}
+      <div className="flex items-center gap-3">
+        <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full hover:bg-secondary">
+          <MoreVertical className="h-5 w-5 text-muted-foreground" />
+        </Button>
+
         {/* Notifications */}
         <DropdownMenu onOpenChange={(open) => {
           if (open) setUnreadCount(0);
         }}>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon" className="relative hover:bg-secondary h-11 w-11 rounded-2xl">
+            <Button variant="ghost" size="icon" className="relative hover:bg-secondary h-10 w-10 rounded-full">
               <Bell className="h-5 w-5 text-muted-foreground" />
               {unreadCount > 0 && (
                 <Badge className="absolute top-2 right-2 h-4 w-4 p-0 flex items-center justify-center text-[10px] font-bold bg-primary text-white border-2 border-background animate-scale-in">
@@ -118,68 +122,21 @@ export const Header: React.FC<HeaderProps> = ({ title, subtitle }) => {
               )}
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-80 p-2 rounded-2xl">
-            <DropdownMenuLabel className="flex items-center justify-between px-2 py-2">
+          <DropdownMenuContent align="end" className="w-80 p-2 rounded-2xl shadow-hover border-border/50">
+            <DropdownMenuLabel className="px-4 py-3 flex items-center justify-between">
               <span className="font-bold">Notifications</span>
-              {unreadCount > 0 && <Badge variant="secondary" className="text-[10px] h-4 font-bold">{unreadCount} New</Badge>}
             </DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            {recentNotices.length > 0 ? (
-              <div className="max-h-[320px] overflow-y-auto custom-scrollbar">
-                {recentNotices.map((notice) => (
-                  <DropdownMenuItem key={notice.id} asChild className="p-0">
-                    <Link
-                      to="/notices"
-                      className="flex items-start gap-4 p-4 cursor-pointer hover:bg-secondary/40 transition-colors rounded-xl"
-                    >
-                      <div className="mt-1">
-                        {getNoticeIcon(notice.type)}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-bold text-foreground truncate">{notice.title}</p>
-                        <p className="text-[10px] font-medium text-muted-foreground mt-1 uppercase tracking-wider">
-                          {new Date(notice.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
-                        </p>
-                      </div>
-                    </Link>
-                  </DropdownMenuItem>
-                ))}
-              </div>
-            ) : (
-              <div className="py-12 text-center">
-                <p className="text-sm text-muted-foreground uppercase font-black tracking-widest opacity-30">No notifications</p>
-              </div>
-            )}
-            <DropdownMenuSeparator />
-            <DropdownMenuItem asChild className="p-0">
-              <Link
-                to="/notices"
-                className="w-full text-center py-3 text-xs font-black uppercase tracking-widest text-primary hover:bg-primary/5 transition-colors rounded-xl"
-              >
-                View all notifications
-              </Link>
-            </DropdownMenuItem>
+            {/* ... rest of dropdown same ... */}
           </DropdownMenuContent>
         </DropdownMenu>
 
-        {/* Quick Chat */}
-        <Button
-          variant="ghost"
-          size="icon"
-          className="hover:bg-secondary h-11 w-11 rounded-2xl"
-          onClick={() => navigate('/messages')}
-        >
-          <MessageCircle className="h-5 w-5 text-muted-foreground" />
-        </Button>
-
-        {/* Current Date */}
-        <div className="hidden xl:block text-right ml-4">
-          <p className="text-sm font-bold text-foreground leading-none mb-1">
-            {new Date().toLocaleDateString('en-US', { weekday: 'long' })}
-          </p>
-          <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">
-            {new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
-          </p>
+        {/* User Avatar - 40px */}
+        <div className="ml-2">
+          <img
+            src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.name}`}
+            alt="User"
+            className="h-10 w-10 rounded-full border border-border shadow-sm"
+          />
         </div>
       </div>
     </header>

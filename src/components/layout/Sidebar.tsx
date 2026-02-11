@@ -24,14 +24,24 @@ interface SidebarProps {
   onToggle: () => void;
 }
 
-const navItems = [
-  { to: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
-  { to: '/tasks', icon: CheckSquare, label: 'Tasks' },
-  { to: '/notices', icon: Bell, label: 'Notices' },
-  { to: '/attendance', icon: CalendarCheck, label: 'Attendance' },
-  { to: '/leave-management', icon: BookOpen, label: 'Leave Mgmt' },
-  { to: '/employees', icon: Users, label: 'Employees' },
-  { to: '/settings', icon: Settings, label: 'Settings' },
+const navSections = [
+  {
+    title: 'GENERAL',
+    items: [
+      { to: '/dashboard', icon: LayoutDashboard, label: 'Analytics' },
+      { to: '/tasks', icon: CheckSquare, label: 'Tasks' },
+      { to: '/notices', icon: Bell, label: 'Notices' },
+      { to: '/attendance', icon: CalendarCheck, label: 'Attendance' },
+    ]
+  },
+  {
+    title: 'MANAGEMENT',
+    items: [
+      { to: '/employees', icon: Users, label: 'Employees' },
+      { to: '/leave-management', icon: BookOpen, label: 'Leave Mgmt' },
+      { to: '/settings', icon: Settings, label: 'Settings' },
+    ]
+  }
 ];
 
 export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle }) => {
@@ -54,8 +64,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle }) => {
 
       <aside
         className={cn(
-          'fixed left-0 top-0 z-40 h-screen bg-sidebar transition-all duration-300 ease-in-out flex flex-col border-r border-sidebar-border lg:shadow-none',
-          collapsed ? 'w-20 -translate-x-full lg:translate-x-0' : 'w-64 translate-x-0'
+          'fixed left-0 top-0 z-40 h-screen bg-sidebar transition-all duration-300 ease-in-out flex flex-col border-r border-sidebar-border lg:shadow-none shadow-sidebar',
+          collapsed ? 'w-20 -translate-x-full lg:translate-x-0' : 'w-[250px] translate-x-0'
         )}
       >
         {/* Logo Section - Fixed at the very top left */}
@@ -95,29 +105,40 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle }) => {
           </div>
         </div>
 
-        {/* Navigation - Simplified without headers */}
-        <nav className="flex-1 px-4 space-y-1 overflow-y-auto custom-scrollbar">
-          {navItems.map((item) => {
-            const isActive = location.pathname === item.to;
-            const Icon = item.icon;
+        {/* Navigation - With Sections */}
+        <nav className="flex-1 px-4 space-y-6 overflow-y-auto custom-scrollbar">
+          {navSections.map((section) => (
+            <div key={section.title} className="space-y-2">
+              {!collapsed && (
+                <h3 className="px-4 text-[11px] font-black text-muted-foreground/50 tracking-widest uppercase">
+                  {section.title}
+                </h3>
+              )}
+              <div className="space-y-1">
+                {section.items.map((item) => {
+                  const isActive = location.pathname === item.to;
+                  const Icon = item.icon;
 
-            return (
-              <NavLink
-                key={item.to}
-                to={item.to}
-                className={cn(
-                  'flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200',
-                  isActive
-                    ? 'bg-sidebar-accent text-sidebar-accent-foreground'
-                    : 'text-sidebar-foreground/60 hover:bg-sidebar-accent/30 hover:text-sidebar-foreground',
-                  collapsed && 'justify-center px-2'
-                )}
-              >
-                <Icon className={cn('h-5 w-5', isActive ? 'text-sidebar-primary' : 'text-sidebar-foreground/60')} />
-                {!collapsed && <span className="animate-fade-in">{item.label}</span>}
-              </NavLink>
-            );
-          })}
+                  return (
+                    <NavLink
+                      key={item.to}
+                      to={item.to}
+                      className={cn(
+                        'flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 group',
+                        isActive
+                          ? 'bg-sidebar-accent text-sidebar-accent-foreground shadow-sm'
+                          : 'text-muted-foreground hover:bg-sidebar-accent/30 hover:text-sidebar-foreground hover:px-5',
+                        collapsed && 'justify-center px-2'
+                      )}
+                    >
+                      <Icon className={cn('h-5 w-5', isActive ? 'text-primary' : 'text-muted-foreground group-hover:text-sidebar-foreground')} />
+                      {!collapsed && <span className="animate-fade-in">{item.label}</span>}
+                    </NavLink>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
         </nav>
 
         {/* Bottom Section */}

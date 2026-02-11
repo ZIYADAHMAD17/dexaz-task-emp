@@ -1,47 +1,48 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
 
+import { motion } from 'framer-motion';
+
 interface StatsCardProps {
   title: string;
   value: string | number;
-  change?: string;
-  changeType?: 'positive' | 'negative' | 'neutral';
   icon: React.ReactNode;
+  iconBg?: string;
+  iconColor?: string;
   className?: string;
+  delay?: number;
 }
 
 export const StatsCard: React.FC<StatsCardProps> = ({
   title,
   value,
-  change,
-  changeType = 'neutral',
   icon,
+  iconBg = 'bg-primary/10',
+  iconColor = 'text-primary',
   className,
+  delay = 0,
 }) => {
   return (
-    <div className={cn(
-      'bg-card border border-border rounded-2xl p-6 card-hover',
-      className
-    )}>
-      <div className="flex items-start justify-between">
-        <div className="space-y-2">
-          <p className="text-sm font-medium text-muted-foreground">{title}</p>
-          <p className="text-3xl font-bold text-foreground">{value}</p>
-          {change && (
-            <p className={cn(
-              'text-sm font-medium',
-              changeType === 'positive' && 'text-success',
-              changeType === 'negative' && 'text-destructive',
-              changeType === 'neutral' && 'text-muted-foreground'
-            )}>
-              {change}
-            </p>
-          )}
-        </div>
-        <div className="w-12 h-12 rounded-xl gradient-dexaz-subtle flex items-center justify-center">
-          {icon}
-        </div>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, delay }}
+      className={cn(
+        'bg-card rounded-card p-6 card-hover border-none flex items-center gap-5',
+        className
+      )}
+    >
+      <div className={cn(
+        'w-12 h-12 rounded-full flex items-center justify-center shrink-0',
+        iconBg,
+        iconColor
+      )}>
+        {icon}
       </div>
-    </div>
+      <div className="flex flex-col">
+        <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-0.5">{title}</p>
+        <p className="text-2xl font-black text-foreground tabular-nums tracking-tight">{value}</p>
+      </div>
+    </motion.div>
   );
 };
