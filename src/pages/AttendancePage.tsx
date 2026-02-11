@@ -7,6 +7,7 @@ import { cn } from '@/lib/utils';
 import { supabase } from '@/lib/supabase';
 import { useToast } from '@/hooks/use-toast';
 import { format, addMonths, subMonths, getDaysInMonth, startOfMonth, endOfMonth } from 'date-fns';
+import { ImportButton } from '@/components/ui/ImportButton';
 
 interface AttendanceRow {
   id: string;
@@ -137,6 +138,59 @@ const AttendancePage: React.FC = () => {
 
   const handlePrevMonth = () => setCurrentDate(prev => subMonths(prev, 1));
   const handleNextMonth = () => setCurrentDate(prev => addMonths(prev, 1));
+  const handleImportAttendance = async (data: any[]) => {
+    setLoading(true);
+    try {
+      const upserts: any[] = [];
+      const currentMonth = currentDate.getMonth();
+      const currentYear = currentDate.getFullYear();
+
+      for (const row of data) {
+        const email = row.email || row.Email;
+        const day = parseInt(row.day || row.Day);
+        const status = row.status === 'P' || row.status === 'Present' || row.status === true;
+
+        if (!email || isNaN(day)) continue;
+
+        // Find profile by email
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('id')
+          .eq('email', email)
+          .single();
+
+        if (!profile) continue;
+
+        const date = format(new Date(currentYear, currentMonth, day), 'yyyy-MM-dd');
+        upserts.push({
+          profile_id: profile.id,
+          date,
+          status
+        });
+      }
+
+      if (upserts.length > 0) {
+        const { error } = await supabase
+          .from('attendance')
+          .upsert(upserts, { onConflict: 'profile_id, date' });
+
+        if (error) throw error;
+      }
+
+      toast({ title: 'Import Complete', description: `${upserts.length} records processed.` });
+      fetchAttendance();
+    } catch (error: any) {
+      toast({ title: 'Import Failed', description: error.message, variant: 'destructive' });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const attendanceTemplate = [
+    { email: 'user@example.com', day: 1, status: 'P' },
+    { email: 'user@example.com', day: 2, status: 'A' }
+  ];
+
   const handleCurrentMonth = () => setCurrentDate(new Date());
 
   const handleSort = () => {
@@ -224,6 +278,13 @@ const AttendancePage: React.FC = () => {
               <Download className="h-4 w-4" />
               <span className="hidden sm:inline">Export Report</span>
             </Button>
+            <ImportButton
+              onImport={handleImportAttendance}
+              template={attendanceTemplate}
+              fileName="attendance_import_template.xlsx"
+              label="Import Attendance"
+              className="h-10"
+            />
           </div>
         </div>
         {/* Table container */}

@@ -38,6 +38,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import { cn } from '@/lib/utils';
 import { supabase } from '@/lib/supabase';
+import { ImportButton } from '@/components/ui/ImportButton';
 
 type LeaveStatus = 'Pending' | 'Approved' | 'Rejected';
 
@@ -163,7 +164,55 @@ const LeaveManagementPage: React.FC = () => {
     }
   };
 
-  const handleImport = () => toast({ title: 'Import', description: 'Import functionality coming soon.' });
+  const handleImportLeaves = async (data: any[]) => {
+    setLoading(true);
+    try {
+      const inserts: any[] = [];
+      for (const row of data) {
+        const email = row.email || row.Email;
+        if (!email) continue;
+
+        // Find profile by email
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('id')
+          .eq('email', email)
+          .single();
+
+        if (!profile) continue;
+
+        const start = new Date(row.start_date || row.startDate);
+        const end = new Date(row.end_date || row.endDate);
+        const durationCount = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+
+        inserts.push({
+          profile_id: profile.id,
+          leave_type: row.type || row.LeaveType || 'Sick',
+          start_date: row.start_date || row.startDate,
+          end_date: row.end_date || row.endDate,
+          duration: durationCount > 0 ? durationCount : 1,
+          reason: row.reason || row.Reason || 'Imported request',
+          status: 'Pending',
+        });
+      }
+
+      if (inserts.length > 0) {
+        const { error } = await supabase.from('leaves').insert(inserts);
+        if (error) throw error;
+      }
+
+      toast({ title: 'Import Complete', description: `${inserts.length} leaves submitted.` });
+      fetchLeaves();
+    } catch (error: any) {
+      toast({ title: 'Import Failed', description: error.message, variant: 'destructive' });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const leaveTemplate = [
+    { email: 'user@example.com', type: 'Casual', start_date: '2024-03-01', end_date: '2024-03-03', reason: 'Family event' }
+  ];
 
   const handleExport = () => {
     if (leaves.length === 0) {
@@ -213,10 +262,12 @@ const LeaveManagementPage: React.FC = () => {
             <h2 className="text-xl font-bold text-foreground">Leave Management</h2>
           </div>
           <div className="flex items-center gap-3">
-            <Button variant="outline" onClick={handleImport} className="gap-2">
-              <Upload className="h-4 w-4" />
-              Import
-            </Button>
+            <ImportButton
+              onImport={handleImportLeaves}
+              template={leaveTemplate}
+              fileName="leave_import_template.xlsx"
+              label="Import"
+            />
             <Button variant="outline" onClick={handleExport} className="gap-2">
               <Download className="h-4 w-4" />
               Export

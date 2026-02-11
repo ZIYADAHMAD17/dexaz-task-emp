@@ -30,6 +30,7 @@ import { Label } from '@/components/ui/label';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/lib/supabase';
 import { useToast } from '@/hooks/use-toast';
+import { ImportButton } from '@/components/ui/ImportButton';
 
 interface Employee {
   id: string;
@@ -168,6 +169,61 @@ const EmployeesPage: React.FC = () => {
     }
   };
 
+  const handleImportEmployees = async (data: any[]) => {
+    setLoading(true);
+    try {
+      for (const row of data) {
+        const email = row.email || row.Email;
+        if (!email) continue;
+
+        // Find profile by email
+        const { data: profile, error: pError } = await supabase
+          .from('profiles')
+          .select('id')
+          .eq('email', email)
+          .single();
+
+        if (pError || !profile) {
+          console.warn(`Profile not found for email: ${email}`);
+          continue;
+        }
+
+        // Check if already an employee
+        const { data: existing, error: eError } = await supabase
+          .from('employees')
+          .select('id')
+          .eq('profile_id', profile.id)
+          .maybeSingle();
+
+        if (existing) continue;
+
+        // Insert new employee
+        const { error: iError } = await supabase
+          .from('employees')
+          .insert({
+            profile_id: profile.id,
+            designation: row.designation || row.Designation || 'Staff',
+            department: row.department || row.Department || 'General',
+            phone: row.phone || row.Phone || '',
+            joining_date: row.joining_date || row.JoiningDate || new Date().toISOString().split('T')[0],
+            status: 'active'
+          });
+
+        if (iError) throw iError;
+      }
+      toast({ title: 'Import Complete', description: 'Employees have been imported successfully.' });
+      fetchEmployees();
+    } catch (error: any) {
+      toast({ title: 'Import Failed', description: error.message, variant: 'destructive' });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const employeeTemplate = [
+    { email: 'user@example.com', designation: 'Software Engineer', department: 'Engineering', phone: '+123456789', joining_date: '2024-01-01' }
+  ];
+
   const filteredEmployees = employeesData.filter(employee =>
     employee.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     employee.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -210,6 +266,12 @@ const EmployeesPage: React.FC = () => {
             <Button variant="outline" size="icon" onClick={fetchEmployees}>
               <Filter className="h-4 w-4" />
             </Button>
+            <ImportButton
+              onImport={handleImportEmployees}
+              template={employeeTemplate}
+              fileName="employee_import_template.xlsx"
+              label="Import Employees"
+            />
           </div>
 
           {isAdmin && (

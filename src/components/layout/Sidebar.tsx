@@ -54,27 +54,26 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle }) => {
 
       <aside
         className={cn(
-          'fixed left-0 top-0 z-40 h-screen bg-sidebar transition-all duration-300 ease-in-out flex flex-col border-r border-sidebar-border shadow-xl lg:shadow-none',
+          'fixed left-0 top-0 z-40 h-screen bg-sidebar transition-all duration-300 ease-in-out flex flex-col border-r border-sidebar-border lg:shadow-none',
           collapsed ? 'w-20 -translate-x-full lg:translate-x-0' : 'w-64 translate-x-0'
         )}
       >
         {/* Logo */}
-        <div className="flex h-16 items-center justify-between px-4 border-b border-sidebar-border">
+        <div className="flex h-16 items-center justify-between px-6 border-b border-sidebar-border">
           <div className={cn('flex items-center gap-3 overflow-hidden', collapsed && 'justify-center')}>
-            <div className="w-10 h-10 rounded-xl overflow-hidden flex-shrink-0 shadow-sm border border-sidebar-border ring-2 ring-primary/5">
-              <img src="/logo.png" alt="Dexaz Logo" className="w-full h-full object-cover" />
+            <div className="w-8 h-8 rounded-lg overflow-hidden flex-shrink-0">
+              <img src="/logo.png" alt="Dexaz Logo" className="w-full h-full object-contain" />
             </div>
             {!collapsed && (
               <div className="animate-fade-in">
                 <h1 className="text-sidebar-foreground font-bold text-lg tracking-tight">Dexaz</h1>
-                <p className="text-sidebar-muted text-xs">Emp System</p>
               </div>
             )}
           </div>
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 py-6 px-3 space-y-1 overflow-y-auto">
+        <nav className="flex-1 py-6 px-4 space-y-1 overflow-y-auto">
           {navItems.map((item) => {
             const isActive = location.pathname === item.to;
             const Icon = item.icon;
@@ -86,12 +85,12 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle }) => {
                 className={cn(
                   'flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200',
                   isActive
-                    ? 'bg-sidebar-primary text-sidebar-primary-foreground shadow-glow'
-                    : 'text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-foreground',
+                    ? 'bg-sidebar-accent text-sidebar-accent-foreground'
+                    : 'text-sidebar-foreground/60 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground',
                   collapsed && 'justify-center px-2'
                 )}
               >
-                <Icon className={cn('h-5 w-5 flex-shrink-0', isActive && 'animate-scale-in')} />
+                <Icon className={cn('h-5 w-5 flex-shrink-0', isActive && 'animate-scale-in text-sidebar-primary')} />
                 {!collapsed && <span className="animate-fade-in">{item.label}</span>}
               </NavLink>
             );
