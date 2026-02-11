@@ -12,10 +12,10 @@
 @layer base {
   :root {
     /* Core backgrounds */
-    --background: 210 20% 98%;
+    --background: 210 25% 99%;
     --foreground: 222 47% 11%;
 
-    /* Cards - Clean White */
+    /* Cards - Clean White with soft styling */
     --card: 0 0% 100%;
     --card-foreground: 222 47% 11%;
 
@@ -23,23 +23,21 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222 47% 11%;
 
-    /* Primary - Modern Blue/Indigo */
-    --primary: 221 83% 53%;
+    /* Primary - Reference Emerald Green */
+    --primary: 142 76% 36%;
     --primary-foreground: 0 0% 100%;
 
-    /* Secondary - Light Grey */
-    --secondary: 210 20% 96%;
+    /* Secondary - Very Light Blue-Grey */
+    --secondary: 210 33% 98%;
     --secondary-foreground: 222 47% 11%;
 
     /* Muted elements */
-    --muted: 210 20% 96%;
+    --muted: 210 20% 97%;
     --muted-foreground: 215 16% 47%;
 
-    /* Accent - Reference Image Green for Active States */
+    /* Accent - Reference Green for Active States */
     --accent: 142 71% 95%;
-    /* Very light green background */
     --accent-foreground: 142 76% 36%;
-    /* Darker green text */
 
     /* Destructive - Coral Red */
     --destructive: 0 84% 60%;
@@ -57,27 +55,27 @@
     --info: 199 89% 48%;
     --info-foreground: 0 0% 100%;
 
-    /* Borders and inputs */
-    --border: 214 32% 91%;
-    --input: 214 32% 91%;
-    --ring: 221 83% 53%;
+    /* Borders and inputs - Very faint */
+    --border: 210 33% 95%;
+    --input: 210 33% 95%;
+    --ring: 142 76% 36%;
 
-    --radius: 12px;
+    --radius: 1.25rem;
 
-    /* Sidebar - White (from reference) */
+    /* Sidebar - Pure White (from reference) */
     --sidebar-background: 0 0% 100%;
     --sidebar-foreground: 222 47% 11%;
     --sidebar-primary: 142 76% 36%;
-    --sidebar-primary-foreground: 142 76% 36%;
+    --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 142 71% 95%;
     --sidebar-accent-foreground: 142 76% 36%;
-    --sidebar-border: 214 32% 91%;
+    --sidebar-border: 210 33% 97%;
     --sidebar-ring: 142 76% 36%;
     --sidebar-muted: 215 16% 47%;
 
     /* Custom Dexaz colors - Kept for gradients but updated for consistency */
     --dexaz-gradient-start: 142 76% 36%;
-    --dexaz-gradient-end: 221 83% 53%;
+    --dexaz-gradient-end: 142 60% 45%;
     --dexaz-surface: 0 0% 100%;
     --dexaz-surface-elevated: 0 0% 100%;
     --dexaz-glow: 142 76% 36%;

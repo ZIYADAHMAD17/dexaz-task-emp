@@ -58,22 +58,45 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle }) => {
           collapsed ? 'w-20 -translate-x-full lg:translate-x-0' : 'w-64 translate-x-0'
         )}
       >
-        {/* Logo */}
-        <div className="flex h-16 items-center justify-between px-6 border-b border-sidebar-border">
-          <div className={cn('flex items-center gap-3 overflow-hidden', collapsed && 'justify-center')}>
-            <div className="w-8 h-8 rounded-lg overflow-hidden flex-shrink-0">
+        {/* Logo Section */}
+        <div className="flex h-24 items-center px-6 mb-2">
+          <div className={cn('flex items-center gap-3 overflow-hidden', collapsed && 'justify-center w-full')}>
+            <div className={cn(
+              "rounded-xl overflow-hidden flex-shrink-0 transition-all duration-300",
+              collapsed ? "w-10 h-10" : "w-12 h-12"
+            )}>
               <img src="/logo.png" alt="Dexaz Logo" className="w-full h-full object-contain" />
             </div>
             {!collapsed && (
               <div className="animate-fade-in">
-                <h1 className="text-sidebar-foreground font-bold text-lg tracking-tight">Dexaz</h1>
+                <h1 className="text-sidebar-foreground font-bold text-2xl tracking-tighter">Dexaz</h1>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* User Profile Section */}
+        <div className="px-4 mb-4">
+          <div className={cn(
+            'flex items-center gap-3 p-3 rounded-2xl bg-secondary/30',
+            collapsed && 'justify-center p-2'
+          )}>
+            <Avatar className="h-10 w-10 border-2 border-background shadow-sm">
+              <AvatarFallback className="bg-primary text-primary-foreground text-sm font-bold">
+                {user ? getInitials(user.name) : 'U'}
+              </AvatarFallback>
+            </Avatar>
+            {!collapsed && (
+              <div className="flex-1 min-w-0 animate-fade-in">
+                <p className="text-sm font-bold text-sidebar-foreground truncate">{user?.name}</p>
+                <p className="text-[10px] uppercase tracking-wider text-sidebar-muted font-bold truncate">{user?.role}</p>
               </div>
             )}
           </div>
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 py-6 px-4 space-y-1 overflow-y-auto">
+        <nav className="flex-1 px-4 space-y-1 overflow-y-auto">
           {navItems.map((item) => {
             const isActive = location.pathname === item.to;
             const Icon = item.icon;
@@ -83,14 +106,14 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle }) => {
                 key={item.to}
                 to={item.to}
                 className={cn(
-                  'flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200',
+                  'flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200',
                   isActive
-                    ? 'bg-sidebar-accent text-sidebar-accent-foreground'
-                    : 'text-sidebar-foreground/60 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground',
+                    ? 'bg-sidebar-accent text-sidebar-accent-foreground shadow-sm'
+                    : 'text-sidebar-foreground/60 hover:bg-sidebar-accent/30 hover:text-sidebar-foreground',
                   collapsed && 'justify-center px-2'
                 )}
               >
-                <Icon className={cn('h-5 w-5 flex-shrink-0', isActive && 'animate-scale-in text-sidebar-primary')} />
+                <Icon className={cn('h-5 w-5 flex-shrink-0', isActive ? 'text-sidebar-primary' : 'text-sidebar-foreground/60')} />
                 {!collapsed && <span className="animate-fade-in">{item.label}</span>}
               </NavLink>
             );
@@ -112,28 +135,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle }) => {
           })}
         </nav>
 
-        {/* User Section */}
-        <div className="p-3 border-t border-sidebar-border">
-          <div className={cn(
-            'flex items-center gap-3 p-3 rounded-xl bg-sidebar-accent/50',
-            collapsed && 'justify-center p-2'
-          )}>
-            <Avatar className="h-9 w-9 border-2 border-sidebar-primary/30">
-              <AvatarFallback className="bg-sidebar-primary text-sidebar-primary-foreground text-sm font-medium">
-                {user ? getInitials(user.name) : 'U'}
-              </AvatarFallback>
-            </Avatar>
-            {!collapsed && (
-              <div className="flex-1 min-w-0 animate-fade-in">
-                <p className="text-sm font-medium text-sidebar-foreground truncate">{user?.name}</p>
-                <div className="flex items-center gap-1.5">
-                  {isAdmin && <Shield className="h-3 w-3 text-sidebar-primary" />}
-                  <p className="text-xs text-sidebar-muted truncate">{user?.role}</p>
-                </div>
-              </div>
-            )}
-          </div>
-
+        {/* Bottom Section */}
+        <div className="p-4 border-t border-sidebar-border">
           <Tooltip delayDuration={0}>
             <TooltipTrigger asChild>
               <Button
@@ -141,12 +144,12 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle }) => {
                 size={collapsed ? "icon" : "default"}
                 onClick={logout}
                 className={cn(
-                  'w-full mt-2 text-sidebar-foreground/70 hover:text-destructive hover:bg-destructive/10',
-                  collapsed ? 'h-10 w-10 mx-auto' : 'justify-start gap-3'
+                  'w-full text-sidebar-foreground/70 hover:text-destructive hover:bg-destructive/10',
+                  collapsed ? 'h-10 w-10 mx-auto' : 'justify-start gap-3 rounded-xl'
                 )}
               >
                 <LogOut className="h-4 w-4" />
-                {!collapsed && <span>Logout</span>}
+                {!collapsed && <span className="font-medium">Logout</span>}
               </Button>
             </TooltipTrigger>
             {collapsed && (

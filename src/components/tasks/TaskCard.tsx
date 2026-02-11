@@ -8,6 +8,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
@@ -36,25 +37,25 @@ interface TaskCardProps {
 }
 
 const statusConfig: Record<TaskStatus, { icon: React.ReactNode; label: string; className: string }> = {
-  completed: { 
-    icon: <CheckCircle2 className="h-4 w-4" />, 
-    label: 'Completed', 
-    className: 'status-active' 
+  completed: {
+    icon: <CheckCircle2 className="h-4 w-4" />,
+    label: 'Completed',
+    className: 'status-active'
   },
-  in_progress: { 
-    icon: <Clock className="h-4 w-4" />, 
-    label: 'In Progress', 
-    className: 'bg-info/10 text-info border-info/20' 
+  in_progress: {
+    icon: <Clock className="h-4 w-4" />,
+    label: 'In Progress',
+    className: 'bg-info/10 text-info border-info/20'
   },
-  pending: { 
-    icon: <Clock className="h-4 w-4" />, 
-    label: 'Pending', 
-    className: 'status-pending' 
+  pending: {
+    icon: <Clock className="h-4 w-4" />,
+    label: 'Pending',
+    className: 'status-pending'
   },
-  overdue: { 
-    icon: <AlertCircle className="h-4 w-4" />, 
-    label: 'Overdue', 
-    className: 'bg-destructive/10 text-destructive border-destructive/20' 
+  overdue: {
+    icon: <AlertCircle className="h-4 w-4" />,
+    label: 'Overdue',
+    className: 'bg-destructive/10 text-destructive border-destructive/20'
   },
 };
 
@@ -78,33 +79,34 @@ export const TaskCard: React.FC<TaskCardProps> = ({
   };
 
   return (
-    <div className="bg-card border border-border rounded-xl p-4 card-hover group">
-      <div className="flex items-start justify-between mb-3">
+    <div className="bg-card border border-border/50 rounded-2xl p-5 hover:shadow-lg transition-all group relative">
+      <div className="flex items-start justify-between mb-4">
         <div className="flex items-center gap-2">
-          <Badge variant="outline" className={cn('text-xs font-medium border', status.className)}>
+          <Badge variant="outline" className={cn('text-[10px] font-black uppercase tracking-widest px-2 py-0.5 border-primary/20 bg-primary/5 text-primary', status.className.includes('bg-') && 'bg-opacity-10 border-opacity-20')}>
             {status.icon}
-            <span className="ml-1">{status.label}</span>
+            <span className="ml-1.5">{status.label}</span>
           </Badge>
-          <Badge variant="secondary" className={cn('text-xs', priority.className)}>
+          <Badge variant="secondary" className={cn('text-[10px] font-black uppercase tracking-widest px-2 py-0.5', priority.className)}>
             {priority.label}
           </Badge>
         </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity"
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 rounded-full hover:bg-secondary/80 opacity-0 group-hover:opacity-100 transition-opacity"
             >
               <MoreHorizontal className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
+          <DropdownMenuContent align="end" className="rounded-xl">
             <DropdownMenuItem onClick={() => onEdit?.(task)}>Edit task</DropdownMenuItem>
             <DropdownMenuItem onClick={() => onStatusChange?.(task.id, 'completed')}>
               Mark complete
             </DropdownMenuItem>
-            <DropdownMenuItem 
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
               onClick={() => onDelete?.(task.id)}
               className="text-destructive focus:text-destructive"
             >
@@ -113,20 +115,23 @@ export const TaskCard: React.FC<TaskCardProps> = ({
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      
-      <h3 className="font-semibold text-foreground mb-1">{task.title}</h3>
-      <p className="text-sm text-muted-foreground line-clamp-2 mb-4">{task.description}</p>
-      
-      <div className="flex items-center justify-between">
+
+      <h3 className="text-base font-bold text-foreground mb-1 leading-tight">{task.title}</h3>
+      <p className="text-sm text-muted-foreground line-clamp-2 mb-6 leading-relaxed">{task.description}</p>
+
+      <div className="flex items-center justify-between pt-4 border-t border-border/50">
         <div className="flex items-center gap-2">
-          <Avatar className="h-6 w-6">
-            <AvatarFallback className="text-xs bg-primary/10 text-primary">
+          <Avatar className="h-7 w-7 border-2 border-background shadow-sm">
+            <AvatarFallback className="text-[10px] font-black bg-primary text-primary-foreground">
               {getInitials(task.assignee.name)}
             </AvatarFallback>
           </Avatar>
-          <span className="text-xs text-muted-foreground">{task.assignee.name}</span>
+          <span className="text-[10px] font-bold text-foreground uppercase tracking-tight">{task.assignee.name}</span>
         </div>
-        <span className="text-xs text-muted-foreground">Due: {task.dueDate}</span>
+        <div className="flex items-center gap-1.5 text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+          <Clock className="h-3 w-3" />
+          {task.dueDate}
+        </div>
       </div>
     </div>
   );

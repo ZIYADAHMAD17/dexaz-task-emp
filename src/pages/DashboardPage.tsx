@@ -8,6 +8,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
+import { Badge } from '@/components/ui/badge';
+import { cn } from '@/lib/utils';
 import {
   PieChart, Pie, Cell, Tooltip as RechartsTooltip, Legend, ResponsiveContainer,
   BarChart, Bar, XAxis, YAxis, CartesianGrid
@@ -39,11 +41,11 @@ const DashboardPage: React.FC = () => {
         supabase.from('tasks')
           .select('*, assignee:profiles(name)')
           .order('created_at', { ascending: false })
-          .limit(3),
+          .limit(10),
         supabase.from('notices')
           .select('*, author:profiles(name, role)')
           .order('created_at', { ascending: false })
-          .limit(2),
+          .limit(5),
         supabase.from('tasks').select('status'),
         supabase.from('tasks').select('assignee:profiles(name)'),
       ]);
@@ -305,87 +307,86 @@ const DashboardPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Main Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Recent Tasks */}
-          <div className="lg:col-span-2 space-y-4">
-            <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-foreground flex items-center gap-2">
-                <CheckSquare className="h-5 w-5 text-primary" />
-                Recent Tasks
-              </h2>
-              <a href="/tasks" className="text-sm text-primary hover:underline">View all</a>
-            </div>
-            <div className="grid gap-4">
-              {recentTasks.map((task) => (
-                <TaskCard key={task.id} task={task} />
-              ))}
+        {/* Main Content Grid - Tasks and Notices */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Today's Schedule */}
+          <div className="bg-card border border-border rounded-3xl p-8 shadow-sm">
+            <h3 className="text-xl font-bold text-foreground mb-8 flex items-center gap-3">
+              <Clock className="h-6 w-6 text-blue-600" />
+              Today's Schedule
+            </h3>
+            <div className="space-y-4">
+              {loading ? (
+                [1, 2, 3, 4].map(i => <div key={i} className="h-16 bg-secondary/30 rounded-2xl animate-pulse" />)
+              ) : recentTasks.length > 0 ? (
+                recentTasks.slice(0, 4).map((task, idx) => {
+                  const time = idx === 0 ? '09:00 AM' : idx === 1 ? '11:30 AM' : idx === 2 ? '02:00 PM' : '04:30 PM';
+                  return (
+                    <div key={idx} className="flex items-center gap-6 p-4 rounded-2xl bg-secondary/30 hover:bg-secondary/50 transition-all group">
+                      <span className="text-sm font-bold text-blue-600 min-w-[70px] uppercase tracking-wide">{time}</span>
+                      <span className="text-base font-medium text-slate-700">{task.title}</span>
+                    </div>
+                  );
+                })
+              ) : (
+                <div className="py-12 bg-secondary/20 rounded-2xl border border-dashed border-border flex flex-col items-center justify-center">
+                  <p className="text-sm text-muted-foreground">No tasks scheduled for today</p>
+                </div>
+              )}
             </div>
           </div>
 
-          {/* Recent Notices */}
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-foreground flex items-center gap-2">
-                <Bell className="h-5 w-5 text-primary" />
-                Recent Notices
-              </h2>
-              <a href="/notices" className="text-sm text-primary hover:underline">View all</a>
-            </div>
+          {/* Upcoming Deadlines */}
+          <div className="bg-card border border-border rounded-3xl p-8 shadow-sm">
+            <h3 className="text-xl font-bold text-foreground mb-8 flex items-center gap-3">
+              <Calendar className="h-6 w-6 text-blue-600" />
+              Upcoming Deadlines
+            </h3>
             <div className="space-y-4">
-              {recentNotices.map((notice) => (
-                <NoticeCard key={notice.id} notice={notice} />
-              ))}
+              {loading ? (
+                [1, 2, 3, 4].map(i => <div key={i} className="h-16 bg-secondary/30 rounded-2xl animate-pulse" />)
+              ) : recentTasks.length > 0 ? (
+                recentTasks.slice(4, 8).map((task, idx) => (
+                  <div key={idx} className="flex items-center gap-6 p-4 rounded-2xl bg-secondary/30 hover:bg-secondary/50 transition-all group">
+                    <span className="text-sm font-bold text-blue-600 min-w-[70px] uppercase tracking-wide">
+                      {new Date(task.createdAt).toLocaleString('en-US', { month: 'short', day: 'numeric' })}
+                    </span>
+                    <span className="text-base font-medium text-slate-700 flex-1 truncate">{task.title}</span>
+                  </div>
+                ))
+              ) : (
+                <div className="py-12 bg-secondary/20 rounded-2xl border border-dashed border-border flex flex-col items-center justify-center">
+                  <p className="text-sm text-muted-foreground">No upcoming deadlines</p>
+                </div>
+              )}
             </div>
           </div>
         </div>
 
-        {/* Quick Stats Row */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="bg-card border border-border rounded-2xl p-6">
-            <h3 className="font-semibold text-foreground mb-4 flex items-center gap-2">
-              <Clock className="h-5 w-5 text-primary" />
-              Today's Schedule
-            </h3>
-            <div className="space-y-3">
-              {[
-                { time: '09:00 AM', event: 'Team standup meeting', type: 'meeting' },
-                { time: '11:30 AM', event: 'Client presentation', type: 'presentation' },
-                { time: '02:00 PM', event: 'Project review', type: 'review' },
-                { time: '04:30 PM', event: '1:1 with manager', type: 'meeting' },
-              ].map((item, idx) => (
-                <div key={idx} className="flex items-center gap-4 p-3 rounded-lg bg-secondary/30 hover:bg-secondary/50 transition-colors">
-                  <span className="text-sm font-medium text-primary">{item.time}</span>
-                  <span className="text-sm text-foreground">{item.event}</span>
-                </div>
-              ))}
-            </div>
+        {/* Recent Notices Full Width */}
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
+              <Bell className="h-6 w-6 text-primary" />
+              Company Notices
+            </h2>
+            <Button variant="ghost" className="text-sm text-primary font-bold" asChild>
+              <a href="/notices">VIEW ALL NOTICES</a>
+            </Button>
           </div>
-
-          <div className="bg-card border border-border rounded-2xl p-6">
-            <h3 className="font-semibold text-foreground mb-4 flex items-center gap-2">
-              <Calendar className="h-5 w-5 text-primary" />
-              Upcoming Deadlines
-            </h3>
-            <div className="space-y-3">
-              {[
-                { date: 'Feb 10', task: 'Quarterly report submission', priority: 'high' },
-                { date: 'Feb 12', task: 'Performance reviews due', priority: 'medium' },
-                { date: 'Feb 15', task: 'Budget proposal', priority: 'high' },
-                { date: 'Feb 20', task: 'Team training session', priority: 'low' },
-              ].map((item, idx) => (
-                <div key={idx} className="flex items-center gap-4 p-3 rounded-lg bg-secondary/30 hover:bg-secondary/50 transition-colors">
-                  <span className="text-sm font-medium text-primary">{item.date}</span>
-                  <span className="text-sm text-foreground flex-1">{item.task}</span>
-                  <span className={`text-xs px-2 py-1 rounded-full ${item.priority === 'high' ? 'bg-destructive/10 text-destructive' :
-                    item.priority === 'medium' ? 'bg-warning/10 text-warning' :
-                      'bg-muted text-muted-foreground'
-                    }`}>
-                    {item.priority}
-                  </span>
-                </div>
-              ))}
-            </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {loading ? (
+              [1, 2, 3].map(i => <div key={i} className="h-40 bg-secondary/30 rounded-3xl animate-pulse" />)
+            ) : recentNotices.length > 0 ? (
+              recentNotices.map((notice) => (
+                <NoticeCard key={notice.id} notice={notice} />
+              ))
+            ) : (
+              <div className="col-span-full py-20 bg-secondary/20 rounded-3xl border border-dashed border-border flex flex-col items-center justify-center">
+                <Bell className="h-12 w-12 text-muted-foreground/30 mb-4" />
+                <p className="text-base text-muted-foreground">No notices found</p>
+              </div>
+            )}
           </div>
         </div>
       </div>
