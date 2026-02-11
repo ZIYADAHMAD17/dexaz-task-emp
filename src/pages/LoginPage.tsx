@@ -127,10 +127,10 @@ const LoginPage: React.FC = () => {
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ duration: 0.8 }}
-            className="w-20 h-20 rounded-xl bg-gradient-to-br from-primary to-primary-dark p-0.5 shadow-2xl mb-12"
+            className="w-20 h-20 rounded-xl bg-gradient-to-br from-primary to-primary-dark p-0 shadow-2xl mb-12"
           >
-            <div className="w-full h-full rounded-[0.7rem] bg-white/10 backdrop-blur-sm flex items-center justify-center overflow-hidden">
-              <img src="/logo.png" alt="Dexaz Logo" className="w-12 h-12 object-contain" />
+            <div className="w-full h-full rounded-xl bg-white/10 backdrop-blur-sm flex items-center justify-center overflow-hidden">
+              <img src="/logo.png" alt="Dexaz Logo" className="w-full h-full object-cover" />
             </div>
           </motion.div>
 

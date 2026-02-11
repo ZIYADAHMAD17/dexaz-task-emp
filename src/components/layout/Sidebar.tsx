@@ -64,7 +64,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle }) => {
 
       <aside
         className={cn(
-          'fixed left-0 top-0 z-40 h-screen bg-sidebar transition-all duration-300 ease-in-out flex flex-col border-r border-sidebar-border lg:shadow-none shadow-sidebar',
+          'fixed left-0 top-0 z-40 h-screen bg-sidebar transition-all duration-300 ease-in-out flex flex-col lg:shadow-none shadow-sidebar',
           collapsed ? 'w-20 -translate-x-full lg:translate-x-0' : 'w-[250px] translate-x-0'
         )}
       >
@@ -75,7 +75,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle }) => {
               "rounded-xl overflow-hidden flex-shrink-0 transition-all duration-300 border border-sidebar-border bg-white/10 backdrop-blur-sm",
               collapsed ? "w-8 h-8" : "w-10 h-10"
             )}>
-              <img src="/logo.png" alt="Dexaz Logo" className="w-full h-full object-contain" />
+              <img src="/logo.png" alt="Dexaz Logo" className="w-full h-full object-cover" />
             </div>
             {!collapsed && (
               <div className="animate-fade-in">
