@@ -93,7 +93,7 @@ const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex bg-white overflow-hidden">
+    <div className="min-h-screen flex bg-background overflow-hidden">
       {/* Left Panel - Hero Branding */}
       <div className="hidden lg:flex lg:w-1/2 relative bg-[#111827] overflow-hidden">
         {/* Animated Background Blobs */}
@@ -107,7 +107,7 @@ const LoginPage: React.FC = () => {
             transition={{ duration: 0.8 }}
             className="w-20 h-20 rounded-[2rem] bg-gradient-to-br from-primary to-primary-dark p-0.5 shadow-2xl mb-12"
           >
-            <div className="w-full h-full rounded-[1.9rem] bg-[#111827] flex items-center justify-center overflow-hidden">
+            <div className="w-full h-full rounded-[1.9rem] bg-white/10 backdrop-blur-sm flex items-center justify-center overflow-hidden">
               <img src="/logo.png" alt="Dexaz Logo" className="w-12 h-12 object-contain" />
             </div>
           </motion.div>
@@ -212,7 +212,7 @@ const LoginPage: React.FC = () => {
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       required
-                      className="h-12 bg-[#F3F4F6] border-none rounded-xl focus-visible:ring-1 focus-visible:ring-primary/20 transition-all font-medium px-4"
+                      className="h-12 bg-secondary border-none rounded-xl focus-visible:ring-1 focus-visible:ring-primary/20 transition-all font-medium px-4"
                     />
                   </div>
                 </motion.div>
@@ -227,7 +227,7 @@ const LoginPage: React.FC = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="h-12 bg-[#F3F4F6] border-none rounded-xl focus-visible:ring-1 focus-visible:ring-primary/20 transition-all font-medium px-4"
+                className="h-12 bg-secondary border-none rounded-xl focus-visible:ring-1 focus-visible:ring-primary/20 transition-all font-medium px-4"
               />
             </div>
 

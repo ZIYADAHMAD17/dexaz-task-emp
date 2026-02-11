@@ -97,7 +97,7 @@ export const Header: React.FC<HeaderProps> = ({ title, subtitle }) => {
             placeholder="Search..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-[38px] w-[200px] lg:w-[320px] h-9 bg-[#F3F4F6] border-none focus-visible:ring-1 focus-visible:ring-primary/20 rounded-full transition-all text-sm"
+            className="pl-[38px] w-[200px] lg:w-[320px] h-9 bg-secondary border-none focus-visible:ring-1 focus-visible:ring-primary/20 rounded-full transition-all text-sm"
           />
         </form>
       </div>
@@ -122,11 +122,48 @@ export const Header: React.FC<HeaderProps> = ({ title, subtitle }) => {
               )}
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-80 p-2 rounded-2xl shadow-hover border-border/50">
+          <DropdownMenuContent align="end" className="w-80 p-2 rounded-2xl shadow-hover border-border/50 bg-card">
             <DropdownMenuLabel className="px-4 py-3 flex items-center justify-between">
               <span className="font-bold">Notifications</span>
+              {unreadCount > 0 && <span className="text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full uppercase font-black tracking-widest">{unreadCount} New</span>}
             </DropdownMenuLabel>
-            {/* ... rest of dropdown same ... */}
+            <DropdownMenuSeparator className="bg-border/50" />
+            <div className="max-h-[350px] overflow-y-auto py-1">
+              {recentNotices.length > 0 ? (
+                recentNotices.map((notice) => (
+                  <DropdownMenuItem
+                    key={notice.id}
+                    className="px-4 py-3 cursor-pointer hover:bg-secondary/50 rounded-xl mx-1 my-0.5 transition-all group"
+                    onClick={() => navigate('/notifications')}
+                  >
+                    <div className="flex gap-4 items-start w-full">
+                      <div className="h-9 w-9 rounded-full bg-secondary flex items-center justify-center flex-shrink-0 group-hover:bg-background transition-colors">
+                        {getNoticeIcon(notice.type)}
+                      </div>
+                      <div className="flex flex-col gap-0.5 min-w-0 flex-1">
+                        <p className="text-sm font-bold truncate leading-tight">{notice.title}</p>
+                        <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">
+                          {new Date(notice.created_at).toLocaleDateString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                        </p>
+                      </div>
+                    </div>
+                  </DropdownMenuItem>
+                ))
+              ) : (
+                <div className="py-10 text-center">
+                  <Bell className="h-10 w-10 text-muted/20 mx-auto mb-3" />
+                  <p className="text-sm text-muted-foreground font-bold">All caught up!</p>
+                </div>
+              )}
+            </div>
+            <DropdownMenuSeparator className="bg-border/50" />
+            <div className="p-1">
+              <Link to="/notifications" className="w-full">
+                <Button variant="ghost" className="w-full h-10 rounded-xl text-xs font-black uppercase tracking-widest text-primary hover:bg-primary/5 hover:text-primary">
+                  View All Notifications
+                </Button>
+              </Link>
+            </div>
           </DropdownMenuContent>
         </DropdownMenu>
 

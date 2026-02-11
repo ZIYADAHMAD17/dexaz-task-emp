@@ -72,7 +72,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle }) => {
         <div className="flex h-16 items-center px-6">
           <div className={cn('flex items-center gap-2 overflow-hidden', collapsed && 'justify-center w-full')}>
             <div className={cn(
-              "rounded-xl overflow-hidden flex-shrink-0 transition-all duration-300 border border-sidebar-border bg-black",
+              "rounded-xl overflow-hidden flex-shrink-0 transition-all duration-300 border border-sidebar-border bg-white/10 backdrop-blur-sm",
               collapsed ? "w-8 h-8" : "w-10 h-10"
             )}>
               <img src="/logo.png" alt="Dexaz Logo" className="w-full h-full object-contain" />
