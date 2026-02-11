@@ -248,8 +248,8 @@ const DashboardPage: React.FC = () => {
             className="lg:col-span-8 bg-card rounded-card p-6 shadow-card flex flex-col"
           >
             <div className="mb-8">
-              <h3 className="text-lg font-bold text-foreground">Website Visits</h3>
-              <p className="text-xs text-muted-foreground font-medium mt-1">(+43%) than last year</p>
+              <h3 className="text-lg font-bold text-foreground">Employee Workload</h3>
+              <p className="text-xs text-muted-foreground font-medium mt-1">Total tasks assigned per member</p>
             </div>
             <div className="h-[320px] w-full mt-auto">
               <ResponsiveContainer width="100%" height="100%">
@@ -277,7 +277,7 @@ const DashboardPage: React.FC = () => {
             variants={itemVariants}
             className="lg:col-span-4 bg-card rounded-card p-6 shadow-card flex flex-col"
           >
-            <h3 className="text-lg font-bold text-foreground mb-10">Current Visits</h3>
+            <h3 className="text-lg font-bold text-foreground mb-10">Task Distribution</h3>
             <div className="h-[300px] w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
@@ -309,8 +309,8 @@ const DashboardPage: React.FC = () => {
             className="bg-card rounded-card p-6 shadow-card"
           >
             <div className="mb-8">
-              <h3 className="text-lg font-bold text-foreground">Conversion Rates</h3>
-              <p className="text-xs text-muted-foreground font-medium mt-1">(+43%) than last year</p>
+              <h3 className="text-lg font-bold text-foreground">Department Productivity</h3>
+              <p className="text-xs text-muted-foreground font-medium mt-1">Completion rate by region/team</p>
             </div>
             <div className="space-y-6 pt-4">
               {[
